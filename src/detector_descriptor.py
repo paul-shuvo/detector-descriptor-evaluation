@@ -8,7 +8,7 @@ def get_all_descriptors():
     Returns:
         (dict):A dictionary containing a collection of descriptor classes.
 
-    .. note::
+    .. attention::
         **KAZE** descriptor only supports *KAZE* keypoints and
         **AKAZE** descriptor only supports *KAZE* or *AKAZE* keypoints.
 
@@ -113,6 +113,14 @@ def get_all_detectors():
 def select_detector(detector_name):
     """Selects the detector class from the detector collection and returns it.
 
+    Examples:
+
+        .. code-block:: python
+
+            In[1]: from src.detector_descriptor import *
+            In[2]: select_detector('FAST')
+            Out[2]: cv2.FastFeatureDetector
+
     Args:
         detector_name (str): Name of the detector that would be selected.
 
@@ -125,6 +133,14 @@ def select_detector(detector_name):
 def select_descriptor(descriptor_name):
     """Selects the descriptor class from the descriptor collection and returns it.
 
+    Examples:
+
+        .. code-block:: python
+
+            In[3]: from src.detector_descriptor import *
+            In[4]: select_descriptor('BRISK')
+            Out[4]: cv2.BRISK
+
     Args:
         descriptor_name (str): Name of the descriptor that would be selected.
 
@@ -134,11 +150,53 @@ def select_descriptor(descriptor_name):
     return get_all_descriptors().get(descriptor_name)
 
 
-# need to test
-# TODO: implement get_all_variants_by_class
-# TODO: implement get_variants_by_class_ans_variant_type
 def get_all_variants():
     """Returns all the variant types and corresponding variants for all the detector and descriptor classes.
+
+    Examples:
+
+        .. code-block:: python
+
+            In[1]: from src.detector_descriptor import *
+            In[2]: get_all_variants()
+            Out[2]:
+            {'BOOSTDESC': {'desc': {'BGM': 100,
+               'BGM_HARD': 101,
+               'BGM_BILINEAR': 102,
+               'LBGM': 200,
+               'BINBOOST_64': 300,
+               'BINBOOST_128': 301,
+               'BINBOOST_256': 302}},
+             'BRIEF': None,
+             'DAISY': {'norm': {'NRM_NONE': 100,
+               'NRM_PARTIAL': 101,
+               'NRM_FULL': 102,
+               'NRM_SIFT': 103}},
+             'FREAK': None,
+             'HarrisLaplace': None,
+             'LATCH': None,
+             'LUCID': None,
+             'STAR': None,
+             'AGAST': {'type': {'AGAST_5_8': 0,
+               'AGAST_7_12d': 1,
+               'AGAST_7_12s': 2,
+               'OAST_9_16': 3}},
+             'AKAZE': {'diffusivity': {'DIFF_PM_G1': 0,
+               'DIFF_PM_G2': 1,
+               'DIFF_WEICKERT': 2,
+               'DIFF_CHARBONNIER': 3},
+              'descriptor_type': {'DESCRIPTOR_KAZE_UPRIGHT': 2,
+               'DESCRIPTOR_KAZE': 3,
+               'DESCRIPTOR_MLDB_UPRIGHT': 4,
+               'DESCRIPTOR_MLDB': 5}},
+             'BRISK': None,
+             'FAST': {'type': {'TYPE_5_8': 0, 'TYPE_7_12': 1, 'TYPE_9_16': 2}},
+             'GFTT': None,
+             'KAZE': {'diffusivity': {'DIFF_PM_G1': 0,
+               'DIFF_PM_G2': 1,
+               'DIFF_WEICKERT': 2,
+               'DIFF_CHARBONNIER': 3}},
+             'ORB': {'scoreType': {'HARRIS_SCORE': 0, 'FAST_SCORE': 1}}}
 
     Returns:
         (dict): A dictionary containing all the variant types and corresponding variants for all the detector and descriptor classes.
@@ -218,6 +276,61 @@ def get_all_variants():
     }
 
 
+def get_variants(class_name, variant_type=None):
+    """Returns all the variants for a specific detector or descriptor class.
+
+    Args:
+        class_name (:class:`cv2`): Specified detector or descriptor class.
+        variant_type (:obj:`str`, optional): Type of variant. Defaults to None.
+
+    .. attention::
+        If variant_type is not specified (None), then the function returns all the variant types and their corresponding variants.
+
+            .. code-block:: python
+
+                In[1] from src.detector_descriptor import *
+                In[2] get_variants('AKAZE')
+                Out[2]:
+                {'diffusivity': {'DIFF_PM_G1': 0,
+                  'DIFF_PM_G2': 1,
+                  'DIFF_WEICKERT': 2,
+                  'DIFF_CHARBONNIER': 3},
+                 'descriptor_type': {'DESCRIPTOR_KAZE_UPRIGHT': 2,
+                  'DESCRIPTOR_KAZE': 3,
+                  'DESCRIPTOR_MLDB_UPRIGHT': 4,
+                  'DESCRIPTOR_MLDB': 5}}
+
+        If it is specified then it returns the variants only for the corresponding variant type.
+
+            .. code-block:: python
+
+                In[3] get_variants('AKAZE', 'diffusivity')
+                Out[3]:
+                {'diffusivity': {'DIFF_PM_G1': 0,
+                  'DIFF_PM_G2': 1,
+                  'DIFF_WEICKERT': 2,
+                  'DIFF_CHARBONNIER': 3},
+                 'descriptor_type': {'DESCRIPTOR_KAZE_UPRIGHT': 2,
+                  'DESCRIPTOR_KAZE': 3,
+                  'DESCRIPTOR_MLDB_UPRIGHT': 4,
+                  'DESCRIPTOR_MLDB': 5}}
+
+
+    .. note::
+        All the available detector and descriptor can be retrieved using :func:`~src.detector_descriptor.get_all_detectors` and :func:`~src.detector_descriptor.get_all_descriptors`.
+
+    Returns:
+        (:obj:`dict`): A dictionary containing all the variants for a specific detector or descriptor class.
+
+    See Also:
+        :func:`~src.detector_descriptor.get_all_detectors`
+        :func:`~src.detector_descriptor.get_all_descriptors`
+
+
+    """
+    return get_all_variants().get(class_name)
+
+
 def print_dictionary(dict_obj):
     """Pretty prints the dict obj
 
@@ -226,3 +339,5 @@ def print_dictionary(dict_obj):
 
     """
     print(pformat(dict_obj))
+
+# print_dictionary(get_variants('AKAZE'))
