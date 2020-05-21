@@ -1,117 +1,105 @@
-import cv2 as cv
+import cv2
 from pprint import pformat
-
-
-def get_all_descriptors():
-    """Returns a collection of descriptor classes in OpenCV (`version 4.2.0`_).
-
-    Returns:
-        (dict):A dictionary containing a collection of descriptor classes.
-
-    .. attention::
-        **KAZE** descriptor only supports *KAZE* keypoints and
-        **AKAZE** descriptor only supports *KAZE* or *AKAZE* keypoints.
-
-    Examples:
-        >>> get_all_descriptors()
-        {'LATCH': <class 'cv2.xfeatures2d_LATCH'>, 'LUCID': <class 'cv2.xfeatures2d_LUCID'>,
-        'FREAK': <class 'cv2.xfeatures2d_FREAK'>, 'DAISY': <class 'cv2.xfeatures2d_DAISY'>,
-        'BOOSTDESC': <class 'cv2.xfeatures2d_BoostDesc'>, 'KAZE': <class 'cv2.KAZE'>,
-        'AKAZE': <class 'cv2.AKAZE'>, 'BRIEF': <class 'cv2.xfeatures2d_BriefDescriptorExtractor'>,
-        'BRISK': <class 'cv2.BRISK'>, 'ORB': <class 'cv2.ORB'>}
-
-        .. parsed-literal::
-
-            descriptors = get_all_descriptors()
-            :func:`print_dictionary(descriptors) <src.detector_descriptor.print_dictionary>`
-
-        Outputs:
-            .. code::
-
-                {'AKAZE': <class 'cv2.AKAZE'>,
-                'BOOSTDESC': <class 'cv2.xfeatures2d_BoostDesc'>,
-                'BRIEF': <class 'cv2.xfeatures2d_BriefDescriptorExtractor'>,
-                'BRISK': <class 'cv2.BRISK'>,
-                'DAISY': <class 'cv2.xfeatures2d_DAISY'>,
-                'FREAK': <class 'cv2.xfeatures2d_FREAK'>,
-                'KAZE': <class 'cv2.KAZE'>,
-                'LATCH': <class 'cv2.xfeatures2d_LATCH'>,
-                'LUCID': <class 'cv2.xfeatures2d_LUCID'>,
-                'ORB': <class 'cv2.ORB'>}
-    See Also:
-        :func:`~src.detector_descriptor.get_all_detectors`
-
-    .. _version 4.2.0:
-        https://docs.opencv.org/4.2.0/modules.html
-    """
-    return {
-        'LATCH': cv.xfeatures2d_LATCH,
-        'LUCID': cv.xfeatures2d_LUCID,
-        'FREAK': cv.xfeatures2d_FREAK,
-        'DAISY': cv.xfeatures2d_DAISY,
-        'BOOSTDESC': cv.xfeatures2d_BoostDesc,
-        'KAZE': cv.KAZE,
-        'AKAZE': cv.AKAZE,
-        'BRIEF': cv.xfeatures2d_BriefDescriptorExtractor,
-        'BRISK': cv.BRISK,
-        'ORB': cv.ORB
-    }
 
 
 def get_all_detectors():
     """Returns a collection of detector classes in OpenCV (`version 4.2.0`_).
 
     Returns:
-        (dict): A dictionary containing a collection of detector classes.
+        (`dict`): A dictionary containing a collection of detector classes.
 
     Examples:
-        >>> get_all_detectors()
-        {'AGAST': <class 'cv2.AgastFeatureDetector'>, 'KAZE': <class 'cv2.KAZE'>,
-        'AKAZE': <class 'cv2.AKAZE'>, 'FAST': <class 'cv2.FastFeatureDetector'>,
-        'BRISK': <class 'cv2.BRISK'>, 'ORB': <class 'cv2.ORB'>, 'GFTT': <class 'cv2.GFTTDetector'>,
-        'HarrisLaplace': <class 'cv2.xfeatures2d_HarrisLaplaceFeatureDetector'>,
-        'StarDetector': <class 'cv2.xfeatures2d_StarDetector'>}
+        .. code-block:: python
 
+            In[1]: from src.detector_descriptor import *
+            In[2]: get_all_detectors()
+            Out[2]:
+            {'AGAST': cv2.AgastFeatureDetector,
+             'KAZE': cv2.KAZE,
+             'AKAZE': cv2.AKAZE,
+             'FAST': cv2.FastFeatureDetector,
+             'BRISK': cv2.BRISK,
+             'ORB': cv2.ORB,
+             'GFTT': cv2.GFTTDetector,
+             'HarrisLaplace': cv2.xfeatures2d_HarrisLaplaceFeatureDetector,
+             'StarDetector': cv2.xfeatures2d_StarDetector}
 
-        .. parsed-literal::
-
-            detectors = get_all_detectors()
-            :func:`print_dictionary(detectors) <src.detector_descriptor.print_dictionary>`
-
-        Outputs:
-            .. code::
-
-                {'AGAST': <class 'cv2.AgastFeatureDetector'>,
-                 'AKAZE': <class 'cv2.AKAZE'>,
-                 'BRISK': <class 'cv2.BRISK'>,
-                 'FAST': <class 'cv2.FastFeatureDetector'>,
-                 'GFTT': <class 'cv2.GFTTDetector'>,
-                 'HarrisLaplace': <class 'cv2.xfeatures2d_HarrisLaplaceFeatureDetector'>,
-                 'KAZE': <class 'cv2.KAZE'>,
-                 'ORB': <class 'cv2.ORB'>,
-                 'StarDetector': <class 'cv2.xfeatures2d_StarDetector'>}
 
     See Also:
         :func:`~src.detector_descriptor.get_all_descriptors`
 
     .. _version 4.2.0:
-        https://docs.opencv.org/4.2.0/modules.html
+        https://docs.opencv2.org/4.2.0/modules.html
     """
     return {
-        'AGAST': cv.AgastFeatureDetector,
-        'KAZE': cv.KAZE,
-        'AKAZE': cv.AKAZE,
-        'FAST': cv.FastFeatureDetector,
-        'BRISK': cv.BRISK,
-        'ORB': cv.ORB,
-        'GFTT': cv.GFTTDetector,
-        'HarrisLaplace': cv.xfeatures2d_HarrisLaplaceFeatureDetector,
-        'StarDetector': cv.xfeatures2d_StarDetector
+        'AGAST': cv2.AgastFeatureDetector,
+        'KAZE': cv2.KAZE,
+        'AKAZE': cv2.AKAZE,
+        'FAST': cv2.FastFeatureDetector,
+        'BRISK': cv2.BRISK,
+        'ORB': cv2.ORB,
+        'GFTT': cv2.GFTTDetector,
+        'HarrisLaplace': cv2.xfeatures2d_HarrisLaplaceFeatureDetector,
+        'StarDetector': cv2.xfeatures2d_StarDetector
+    }
+
+
+def get_all_descriptors():
+    """Returns a collection of descriptor classes in OpenCV (`version 4.2.0`_).
+
+    Returns:
+        (`dict`):A dictionary containing a collection of descriptor classes.
+
+    .. attention::
+        **KAZE** descriptor only supports *KAZE* keypoints and
+        **AKAZE** descriptor only supports *KAZE* or *AKAZE* keypoints.
+
+    Examples:
+        .. code-block:: python
+
+            In[1]: from src.detector_descriptor import *
+            In[2]: get_all_descriptors()
+            Out[2]:
+            {'LATCH': cv2.xfeatures2d_LATCH,
+             'LUCID': cv2.xfeatures2d_LUCID,
+             'FREAK': cv2.xfeatures2d_FREAK,
+             'DAISY': cv2.xfeatures2d_DAISY,
+             'BOOSTDESC': cv2.xfeatures2d_BoostDesc,
+             'KAZE': cv2.KAZE,
+             'AKAZE': cv2.AKAZE,
+             'BRIEF': cv2.xfeatures2d_BriefDescriptorExtractor,
+             'BRISK': cv2.BRISK,
+             'ORB': cv2.ORB}
+
+
+    See Also:
+        :func:`~src.detector_descriptor.get_all_detectors`
+
+    .. _version 4.2.0:
+        https://docs.opencv2.org/4.2.0/modules.html
+    """
+    return {
+        'LATCH': cv2.xfeatures2d_LATCH,
+        'LUCID': cv2.xfeatures2d_LUCID,
+        'FREAK': cv2.xfeatures2d_FREAK,
+        'DAISY': cv2.xfeatures2d_DAISY,
+        'BOOSTDESC': cv2.xfeatures2d_BoostDesc,
+        'KAZE': cv2.KAZE,
+        'AKAZE': cv2.AKAZE,
+        'BRIEF': cv2.xfeatures2d_BriefDescriptorExtractor,
+        'BRISK': cv2.BRISK,
+        'ORB': cv2.ORB
     }
 
 
 def select_detector(detector_name):
     """Selects the detector class from the detector collection and returns it.
+
+    Args:
+        detector_name (`str`): Name of the detector that would be selected.
+
+    Returns:
+        (`class`): A OpenCV detector class.
 
     Examples:
 
@@ -121,17 +109,21 @@ def select_detector(detector_name):
             In[2]: select_detector('FAST')
             Out[2]: cv2.FastFeatureDetector
 
-    Args:
-        detector_name (str): Name of the detector that would be selected.
+    See Also:
+        :func:`~src.detector_descriptor.select_descriptor`
 
-    Returns:
-        (class): A OpenCV detector class.
     """
     return get_all_detectors().get(detector_name)
 
 
 def select_descriptor(descriptor_name):
     """Selects the descriptor class from the descriptor collection and returns it.
+
+    Args:
+        descriptor_name (`str`): Name of the descriptor that would be selected.
+
+    Returns:
+        (`class`): A OpenCV descriptor class.
 
     Examples:
 
@@ -141,17 +133,17 @@ def select_descriptor(descriptor_name):
             In[4]: select_descriptor('BRISK')
             Out[4]: cv2.BRISK
 
-    Args:
-        descriptor_name (str): Name of the descriptor that would be selected.
-
-    Returns:
-        (class): A OpenCV descriptor class.
+    See Also:
+        :func:`~src.detector_descriptor.select_detector`
     """
     return get_all_descriptors().get(descriptor_name)
 
 
 def get_all_variants():
     """Returns all the variant types and corresponding variants for all the detector and descriptor classes.
+
+    Returns:
+        (`dict`): A dictionary containing all the variant types and corresponding variants for all the detector and descriptor classes.
 
     Examples:
 
@@ -198,8 +190,10 @@ def get_all_variants():
                'DIFF_CHARBONNIER': 3}},
              'ORB': {'scoreType': {'HARRIS_SCORE': 0, 'FAST_SCORE': 1}}}
 
-    Returns:
-        (dict): A dictionary containing all the variant types and corresponding variants for all the detector and descriptor classes.
+    See Also:
+        :func:`~src.detector_descriptor.get_all_detectors`
+        :func:`~src.detector_descriptor.get_all_descriptors`
+
     """
     return {
         'BOOSTDESC': {
@@ -280,11 +274,12 @@ def get_variants(class_name, variant_type=None):
     """Returns all the variants for a specific detector or descriptor class.
 
     Args:
-        class_name (:class:`cv2`): Specified detector or descriptor class.
-        variant_type (:obj:`str`, optional): Type of variant. Defaults to None.
+        class_name (`str`): Specified detector or descriptor class.
+        variant_type (`str`, optional): Type of variant. Defaults to None.
 
-    .. attention::
-        If variant_type is not specified (None), then the function returns all the variant types and their corresponding variants.
+    Examples:
+        .. attention::
+            If variant_type is not specified (None), then the function returns all the variant types and their corresponding variants.
 
             .. code-block:: python
 
@@ -300,7 +295,7 @@ def get_variants(class_name, variant_type=None):
                   'DESCRIPTOR_MLDB_UPRIGHT': 4,
                   'DESCRIPTOR_MLDB': 5}}
 
-        If it is specified then it returns the variants only for the corresponding variant type.
+            If it is specified then it returns the variants only for the corresponding variant type.
 
             .. code-block:: python
 
@@ -328,16 +323,228 @@ def get_variants(class_name, variant_type=None):
 
 
     """
-    return get_all_variants().get(class_name)
+    if variant_type is None:
+        return get_all_variants().get(class_name)
+    else:
+        return get_all_variants().get(class_name).get(variant_type)
 
 
 def print_dictionary(dict_obj):
-    """Pretty prints the dict obj
+    """Pretty prints a python dict obj
 
     Args:
-        dict_obj (dict): A python `dict` object
+        dict_obj (`dict`): A python `dict` object
 
     """
     print(pformat(dict_obj))
 
-# print_dictionary(get_variants('AKAZE'))
+
+def initialize_detector(detector_name, variant_type=None, variant=None):
+    """
+    Initializes a detector instance and returns it.
+
+    Args:
+        detector_name (`str`): Name of the detector.
+        variant_type (`str`, optional): Variant type for the specified detector. Defaults to None.
+        variant (`int`, optional): Variant of the specified variant type. Defaults to None.
+
+    Returns:
+        (:obj:`cv2`): A `cv2` object instance.
+
+    Important:
+        - If `variant_type` is `None`, `variant` also has to be `None`, and vice versa.
+        - When `variant_type` and `variant` is `None` the detector would be initialized with default values.
+
+    Examples:
+        .. code-block:: python
+
+            In[1]: from src.detector_descriptor import *
+            In[2]: initialize_detector('FAST')
+            Out[2]: <FastFeatureDetector 000002269365FC70>
+            In[3]: initialize_detector('FAST','type',2)
+            Out[3]: <FastFeatureDetector 000002269365FC50>
+
+    Raises:
+        ModuleNotFoundError: If the `detector_name` doesn't match with any of the available detectors.
+        ValueError: If the `variant_type` doesn't match in any of the available variant type (`variant_type`) for the
+            specified detector class (`detector_name`).
+        ValueError: If the `variant` doesn't match any of the available variant for specified variant type
+            (`variant_type`) and detector class (`detector_name`).
+
+    """
+    if detector_name not in get_all_detectors():
+        raise ModuleNotFoundError(f"{detector_name} don't exist.")
+
+    if variant_type is None and variant is None:
+        # `temp` is a temporary dictionary that holds the object instance
+        # Attention: `exec()` function has been used to dynamically create the desired
+        #   object instance.
+        # `exec_string` is the expression that is being executed by the `exec()` function.
+
+        temp = {}
+        exec_string = "temp['instance'] = {0}.create()".format(str(select_detector(detector_name)).split('\'')[1])
+        exec(exec_string)
+
+        return temp['instance']
+
+    elif bool(variant_type) ^ bool(variant):
+        raise ValueError(f"Either one of the parameters variant_type of variant is None")
+
+    else:
+        if variant_type not in get_all_variants().get(detector_name):
+            raise ValueError(f"The variant type {variant_type} for class {detector_name} doesn't exist.")
+
+        if variant not in get_variants(detector_name, variant_type).values():
+            raise ValueError(f"The variant {variant} of type {variant_type} for class {detector_name} doesn't exist.")
+
+        # `temp` is a temporary dictionary that holds the object instance
+        # Attention: `exec()` function has been used to dynamically create the desired
+        #   object instance.
+        # `exec_string` is the expression that is being executed by the `exec()` function.
+
+        temp = {}
+        exec_string = "temp['instance'] = {0}.create({1}={2})".format(str(select_detector(detector_name)).split('\'')[1],
+                                                                              variant_type, variant)
+        exec(exec_string)
+
+        return temp['instance']
+
+
+def initialize_descriptor(descriptor_name, variant_type=None, variant=None):
+    """
+    Initializes a descriptor instance and returns it.
+
+    Args:
+        descriptor_name (`str`): Name of the descriptor.
+        variant_type (`str`, optional): Variant type for the specified descriptor. Defaults to None.
+        variant (`int`, optional): Variant of the specified variant type. Defaults to None.
+
+    Returns:
+        (:obj:`cv2`): A `cv2` object instance.
+
+    Important:
+        - If `variant_type` is `None`, `variant` also has to be `None`, and vice versa.
+        - When `variant_type` and `variant` is `None` the descriptor would be initialized with default values.
+
+    Examples:
+        .. code-block:: python
+
+            In[1]: from src.descriptor_descriptor import *
+            In[2]: initialize_descriptor('AKAZE')
+            Out[2]: <AKAZE 000002269365FD10>
+            In[3]: initialize_descriptor('AKAZE','diffusivity', 3)
+            Out[3]: <AKAZE 000002269365FDB0>
+
+    Raises:
+        ModuleNotFoundError: If the `descriptor_name` doesn't match with any of the available descriptors.
+        ValueError: If the `variant_type` doesn't match in any of the available variant type (`variant_type`) for the
+            specified descriptor class (`descriptor_name`).
+        ValueError: If the `variant` doesn't match any of the available variant for specified variant type
+            (`variant_type`) and descriptor class (`descriptor_name`).
+
+    """
+    if descriptor_name not in get_all_descriptors():
+        raise ModuleNotFoundError(f"{descriptor_name} don't exist.")
+
+    if variant_type is None and variant is None:
+        # `temp` is a temporary dictionary that holds the object instance
+        # Attention: `exec()` function has been used to dynamically create the desired
+        #   object instance.
+        # `exec_string` is the expression that is being executed by the `exec()` function.
+
+        temp = {}
+        exec_string = "temp['instance'] = {0}.create()".format(str(select_descriptor(descriptor_name)).split('\'')[1])
+        exec(exec_string)
+
+        return temp['instance']
+
+    elif bool(variant_type) ^ bool(variant):
+        raise ValueError(f"Either one of the parameters variant_type of variant is None")
+
+    else:
+        if variant_type not in get_all_variants().get(descriptor_name):
+            raise ValueError(f"The variant type {variant_type} for class {descriptor_name} doesn't exist.")
+
+        # if type(variant) is not int:
+        #     raise TypeError(f"variant value should be a int type")
+
+        if variant not in get_variants(descriptor_name, variant_type).values():
+            raise ValueError(f"The variant {variant} of type {variant_type} for class {descriptor_name} doesn't exist.")
+
+        # `temp` is a temporary dictionary that holds the object instance
+        # Attention: `exec()` function has been used to dynamically create the desired
+        #   object instance.
+        # `exec_string` is the expression that is being executed by the `exec()` function.
+        temp = {}
+        exec_string = "temp['instance'] = {0}.create({1}={2})".format(str(select_descriptor(descriptor_name)).split('\'')[1],
+                                                                              variant_type, variant)
+        exec(exec_string)
+
+        return temp['instance']
+
+
+def available_attributes(var):
+    """
+    Returns the attributes of a `class` or `object`.
+
+    Important:
+        This function checks class/object properties to find `get*` methods and assumes methods starting with `get`
+        would return an attribute value of a class/object.
+
+    Args:
+        var (`str` or `object`): An object or name of the class.
+
+    Returns:
+        (`list`): A list of strings containing the attribute (supposed) names.
+
+    Examples:
+        .. attention::
+            If `var` is a class name e.g. 'FAST'
+
+            .. code-block:: python
+
+                In[1]: from src.detector_descriptor import *
+                In[2]: available_attributes('FAST')
+                Out[2]: ['DefaultName', 'NonmaxSuppression', 'Threshold', 'Type']
+
+            If `var` is an object instance.
+
+            .. code-block:: python
+
+                In[1]: from src.detector_descriptor import *
+                In[2]: obj = initialize_descriptor('AKAZE')
+                In[3]: available_attributes(obj)
+                Out[4]:
+                ['DefaultName',
+                 'DescriptorChannels',
+                 'DescriptorSize',
+                 'DescriptorType',
+                 'Diffusivity',
+                 'NOctaveLayers',
+                 'NOctaves',
+                 'Threshold']
+
+    Raises:
+        ModuleNotFoundError: If the class (`var`) doesn't exist.
+    """
+    if type(var) is str:
+        if var in get_all_detectors():
+            class_ = select_detector(var)
+        elif var in get_all_descriptors():
+            class_ = select_descriptor(var)
+        else:
+            raise ModuleNotFoundError(f"The class: {var} doesn't exist")
+
+        # Check class (class_) properties to find `get*` methods and return them as a list of string.
+        # Assuming methods starting with `get` would return an attribute of a class.
+        attributes = [value[3:] for value in dir(class_) if 'get' in value and '__' not in value]
+    else:
+        attributes = [value[3:] for value in dir(var) if 'get' in value and '__' not in value]
+
+    return attributes
+
+
+# Todo: Check better testing techniques
+# Todo: get_attribute
+# Todo: set_attribute
+# Todo: Code fix

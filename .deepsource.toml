@@ -6,3 +6,9 @@ enabled = true
 
   [analyzers.meta]
   runtime_version = "3.x.x"
+
+test_patterns = [
+  "tests/**",
+  "test_*.py"
+]
+
