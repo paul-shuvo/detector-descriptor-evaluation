@@ -1,6 +1,6 @@
 import sys
 from os.path import dirname
-from os.path import abspath, join
+from os.path import abspath
 
 # print(__file__)
 # print(abspath(__file__))
