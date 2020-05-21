@@ -2,8 +2,10 @@ version = 1
 
 test_patterns = [
     "\"tests/**\",",
+    "tests/*.py",
     "\"tests/test_*.py\""
 ]
+
 
 [[analyzers]]
 name = "python"
