@@ -51,21 +51,21 @@ def test_get_all_variants():
     for class_, value in get_all_variants().items():
         if value is None:
             continue
+
+        if class_ in get_all_detectors().keys():
+            class_obj = select_detector(class_)
         else:
-            if class_ in get_all_detectors().keys():
-                class_obj = select_detector(class_)
-            else:
-                class_obj = select_descriptor(class_)
-            for variant_type, variant_values in value.items():
-                for variant in variant_values.values():
-                    try:
-                        exec_string = "instance = {0}.create({1}={2})".format(str(class_obj).split('\'')[1],
-                                                                              variant_type, variant)
-                        # `exec` is used to dynamically create the instances
-                        exec(exec_string)
-                    except:
-                        error += 'Error in the following combination: class: {0}, variant_type: {1}, variant: {2}'.format(
-                            str(class_obj).split('\'')[1], variant_type, variant)
+            class_obj = select_descriptor(class_)
+        for variant_type, variant_values in value.items():
+            for variant in variant_values.values():
+                try:
+                    exec_string = "instance = {0}.create({1}={2})".format(str(class_obj).split('\'')[1],
+                                                                          variant_type, variant)
+                    # `exec` is used to dynamically create the instances
+                    exec(exec_string)
+                except:
+                    error += 'Error in the following combination: class: {0}, variant_type: {1}, variant: {2}'.format(
+                        str(class_obj).split('\'')[1], variant_type, variant)
     if error != '':
         test_status = error
     assert test_status == 'All the detector and descriptor classes were successfully initialized using respective variant types'

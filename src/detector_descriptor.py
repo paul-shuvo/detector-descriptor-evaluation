@@ -3,7 +3,8 @@ from pprint import pformat
 
 
 def get_all_detectors():
-    """Returns a collection of detector classes in OpenCV (`version 4.2.0`_).
+    """
+    Returns a collection of detector classes in OpenCV (`version 4.2.0`_).
 
     Returns:
         (`dict`): A dictionary containing a collection of detector classes.
@@ -45,7 +46,8 @@ def get_all_detectors():
 
 
 def get_all_descriptors():
-    """Returns a collection of descriptor classes in OpenCV (`version 4.2.0`_).
+    """
+    Returns a collection of descriptor classes in OpenCV (`version 4.2.0`_).
 
     Returns:
         (`dict`):A dictionary containing a collection of descriptor classes.
@@ -93,7 +95,8 @@ def get_all_descriptors():
 
 
 def select_detector(detector_name):
-    """Selects the detector class from the detector collection and returns it.
+    """
+    Selects the detector class from the detector collection and returns it.
 
     Args:
         detector_name (`str`): Name of the detector that would be selected.
@@ -117,7 +120,8 @@ def select_detector(detector_name):
 
 
 def select_descriptor(descriptor_name):
-    """Selects the descriptor class from the descriptor collection and returns it.
+    """
+    Selects the descriptor class from the descriptor collection and returns it.
 
     Args:
         descriptor_name (`str`): Name of the descriptor that would be selected.
@@ -140,7 +144,8 @@ def select_descriptor(descriptor_name):
 
 
 def get_all_variants():
-    """Returns all the variant types and corresponding variants for all the detector and descriptor classes.
+    """
+    Returns all the variant types and corresponding variants for all the detector and descriptor classes.
 
     Returns:
         (`dict`): A dictionary containing all the variant types and corresponding variants for all the detector and descriptor classes.
@@ -271,7 +276,8 @@ def get_all_variants():
 
 
 def get_variants(class_name, variant_type=None):
-    """Returns all the variants for a specific detector or descriptor class.
+    """
+    Returns all the variants for a specific detector or descriptor class.
 
     Args:
         class_name (`str`): Specified detector or descriptor class.
@@ -325,12 +331,13 @@ def get_variants(class_name, variant_type=None):
     """
     if variant_type is None:
         return get_all_variants().get(class_name)
-    else:
-        return get_all_variants().get(class_name).get(variant_type)
+
+    return get_all_variants().get(class_name).get(variant_type)
 
 
 def print_dictionary(dict_obj):
-    """Pretty prints a python dict obj
+    """
+    Pretty prints a python dict obj
 
     Args:
         dict_obj (`dict`): A python `dict` object
@@ -387,27 +394,27 @@ def initialize_detector(detector_name, variant_type=None, variant=None):
 
         return temp['instance']
 
-    elif bool(variant_type) ^ bool(variant):
-        raise ValueError(f"Either one of the parameters variant_type of variant is None")
+    if bool(variant_type) ^ bool(variant):
+        raise ValueError("Either one of the parameters variant_type of variant is None")
 
-    else:
-        if variant_type not in get_all_variants().get(detector_name):
-            raise ValueError(f"The variant type {variant_type} for class {detector_name} doesn't exist.")
 
-        if variant not in get_variants(detector_name, variant_type).values():
-            raise ValueError(f"The variant {variant} of type {variant_type} for class {detector_name} doesn't exist.")
+    if variant_type not in get_all_variants().get(detector_name):
+        raise ValueError(f"The variant type {variant_type} for class {detector_name} doesn't exist.")
 
-        # `temp` is a temporary dictionary that holds the object instance
-        # Attention: `exec()` function has been used to dynamically create the desired
-        #   object instance.
-        # `exec_string` is the expression that is being executed by the `exec()` function.
+    if variant not in get_variants(detector_name, variant_type).values():
+        raise ValueError(f"The variant {variant} of type {variant_type} for class {detector_name} doesn't exist.")
 
-        temp = {}
-        exec_string = "temp['instance'] = {0}.create({1}={2})".format(str(select_detector(detector_name)).split('\'')[1],
-                                                                              variant_type, variant)
-        exec(exec_string)
+    # `temp` is a temporary dictionary that holds the object instance
+    # Attention: `exec()` function has been used to dynamically create the desired
+    #   object instance.
+    # `exec_string` is the expression that is being executed by the `exec()` function.
 
-        return temp['instance']
+    temp = {}
+    exec_string = "temp['instance'] = {0}.create({1}={2})".format(str(select_detector(detector_name)).split('\'')[1],
+                                                                          variant_type, variant)
+    exec(exec_string)
+
+    return temp['instance']
 
 
 def initialize_descriptor(descriptor_name, variant_type=None, variant=None):
@@ -458,29 +465,28 @@ def initialize_descriptor(descriptor_name, variant_type=None, variant=None):
 
         return temp['instance']
 
-    elif bool(variant_type) ^ bool(variant):
-        raise ValueError(f"Either one of the parameters variant_type of variant is None")
+    if bool(variant_type) ^ bool(variant):
+        raise ValueError("Either one of the parameters variant_type of variant is None")
 
-    else:
-        if variant_type not in get_all_variants().get(descriptor_name):
-            raise ValueError(f"The variant type {variant_type} for class {descriptor_name} doesn't exist.")
+    if variant_type not in get_all_variants().get(descriptor_name):
+        raise ValueError(f"The variant type {variant_type} for class {descriptor_name} doesn't exist.")
 
-        # if type(variant) is not int:
-        #     raise TypeError(f"variant value should be a int type")
+    # if type(variant) is not int:
+    #     raise TypeError(f"variant value should be a int type")
 
-        if variant not in get_variants(descriptor_name, variant_type).values():
-            raise ValueError(f"The variant {variant} of type {variant_type} for class {descriptor_name} doesn't exist.")
+    if variant not in get_variants(descriptor_name, variant_type).values():
+        raise ValueError(f"The variant {variant} of type {variant_type} for class {descriptor_name} doesn't exist.")
 
-        # `temp` is a temporary dictionary that holds the object instance
-        # Attention: `exec()` function has been used to dynamically create the desired
-        #   object instance.
-        # `exec_string` is the expression that is being executed by the `exec()` function.
-        temp = {}
-        exec_string = "temp['instance'] = {0}.create({1}={2})".format(str(select_descriptor(descriptor_name)).split('\'')[1],
-                                                                              variant_type, variant)
-        exec(exec_string)
+    # `temp` is a temporary dictionary that holds the object instance
+    # Attention: `exec()` function has been used to dynamically create the desired
+    #   object instance.
+    # `exec_string` is the expression that is being executed by the `exec()` function.
+    temp = {}
+    exec_string = "temp['instance'] = {0}.create({1}={2})".format(str(select_descriptor(descriptor_name)).split('\'')[1],
+                                                                          variant_type, variant)
+    exec(exec_string)
 
-        return temp['instance']
+    return temp['instance']
 
 
 def available_attributes(var):
