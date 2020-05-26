@@ -17,9 +17,9 @@
    - pip install codecov
  scripts:
    - pytest
-   - coverage run tests.py
+   - pytest --cov=./tests/
  after_success:
-    - codecov --token=3d1f9a45-4ffd-4650-bf3f-dfca70cb6c8e
+    - codecov
 
 
 #  - sudo apt-get update
