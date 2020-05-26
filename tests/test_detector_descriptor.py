@@ -1,5 +1,6 @@
 from src.detector_descriptor import *
 import cv2
+import pytest
 
 
 # import os
@@ -74,68 +75,56 @@ def test_get_all_variants():
 def test_initialize_detector():
     error_count = 0
 
-    try:
+    with pytest.raises(ModuleNotFoundError):
         instance = initialize_detector('DAISY')
-    except ModuleNotFoundError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_detector('FAST', 'type')
-    except ValueError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_detector('FAST', variant=2)
-    except ValueError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_detector('FAST', 'norm', 2)
-    except ValueError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_detector('FAST', 'type', 9)
-    except ValueError:
-        error_count += 1
-
-    assert error_count == 5
 
 
 def test_initialize_descriptor():
-    error_count = 0
 
-    try:
+    with pytest.raises(ModuleNotFoundError):
         instance = initialize_descriptor('FAST')
-    except ModuleNotFoundError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_descriptor('AKAZE', 'diffusivity')
-    except ValueError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_descriptor('AKAZE', variant=1)
-    except ValueError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_descriptor('AKAZE', 'norm', 2)
-    except ValueError:
-        error_count += 1
 
-    try:
+    with pytest.raises(ValueError):
         instance = initialize_descriptor('AKAZE', 'diffusivity', 9)
-    except ValueError:
-        error_count += 1
 
-    assert error_count == 5
 
 def test_available_attributes():
-    error = "The class: THANOS doesn't exist"
-    try:
+    with pytest.raises(ModuleNotFoundError):
         attributes = available_attributes('THANOS')
-    except ModuleNotFoundError as e:
-        assert error == e.args[0]
 
+
+def test_get_attribute():
+    with pytest.raises(AttributeError):
+        obj = initialize_detector('FAST', 'type', 2)
+        get_attribute(obj, 'typ')
+
+
+def test_set_attribute():
+    with pytest.raises(AttributeError):
+        obj = initialize_detector('FAST', 'type', 2)
+        set_attribute(obj, 'typ', 1)
+
+    obj = initialize_detector('FAST', 'type', 1)
+    set_attribute(obj, 'Type', 2)
+    assert obj.getType() == 2

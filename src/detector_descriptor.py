@@ -329,6 +329,9 @@ def get_variants(class_name, variant_type=None):
 
 
     """
+    if class_name not in get_all_variants():
+        raise ModuleNotFoundError(f"{class_name} don't exist.")
+
     if variant_type is None:
         return get_all_variants().get(class_name)
 
@@ -362,6 +365,9 @@ def initialize_detector(detector_name, variant_type=None, variant=None):
         - If `variant_type` is `None`, `variant` also has to be `None`, and vice versa.
         - When `variant_type` and `variant` is `None` the detector would be initialized with default values.
 
+    .. note::
+        This method uses `exec`_.
+
     Examples:
         .. code-block:: python
 
@@ -377,7 +383,8 @@ def initialize_detector(detector_name, variant_type=None, variant=None):
             specified detector class (`detector_name`).
         ValueError: If the `variant` doesn't match any of the available variant for specified variant type
             (`variant_type`) and detector class (`detector_name`).
-
+    .. _exec:
+        https://docs.python.org/3/library/functions.html#exec
     """
     if detector_name not in get_all_detectors():
         raise ModuleNotFoundError(f"{detector_name} don't exist.")
@@ -394,9 +401,8 @@ def initialize_detector(detector_name, variant_type=None, variant=None):
 
         return temp['instance']
 
-    if bool(variant_type) ^ bool(variant):
-        raise ValueError("Either one of the parameters variant_type of variant is None")
-
+    if bool(variant_type) ^ bool(variant) and variant != 0:
+        raise ValueError("Either one of the parameters variant_type or variant is None")
 
     if variant_type not in get_all_variants().get(detector_name):
         raise ValueError(f"The variant type {variant_type} for class {detector_name} doesn't exist.")
@@ -433,6 +439,9 @@ def initialize_descriptor(descriptor_name, variant_type=None, variant=None):
         - If `variant_type` is `None`, `variant` also has to be `None`, and vice versa.
         - When `variant_type` and `variant` is `None` the descriptor would be initialized with default values.
 
+    .. Note::
+        This method uses `exec`_.
+
     Examples:
         .. code-block:: python
 
@@ -449,6 +458,8 @@ def initialize_descriptor(descriptor_name, variant_type=None, variant=None):
         ValueError: If the `variant` doesn't match any of the available variant for specified variant type
             (`variant_type`) and descriptor class (`descriptor_name`).
 
+    .. _exec:
+        https://docs.python.org/3/library/functions.html#exec
     """
     if descriptor_name not in get_all_descriptors():
         raise ModuleNotFoundError(f"{descriptor_name} don't exist.")
@@ -550,7 +561,93 @@ def available_attributes(var):
     return attributes
 
 
+def get_attribute(obj, attribute_name):
+    """
+    Returns the value of the attribute of an object.
+
+    Args:
+        obj (:obj:`cv2`):
+        attribute_name (`str`): The name of the attribute. *`attribute_name` should have a **capital case** value*
+
+    .. attention::
+        All the attributes can be found using :func:`~src.detector_descriptor.available_attributes`
+
+    Returns:
+        The value of the attribute.
+
+    .. note::
+        This method uses `exec`_
+
+    Examples:
+        .. code-block:: python
+
+            In[1]: from src.detector_descriptor import *
+            In[2]: obj = initialize_detector('FAST', 'type', 1)
+            In[3]: get_attribute(obj, 'Type')
+            Out[9]: 1
+
+    Raises:
+        AttributeError: If the attribute doesn't exist for the specified object `obj`
+
+    See Also:
+        :func:`~src.detector_descriptor.available_attributes`
+        :func:`~src.detector_descriptor.set_attribute`
+
+    .. _exec:
+        https://docs.python.org/3/library/functions.html#exec
+    """
+    if attribute_name not in available_attributes(obj):
+        raise AttributeError(f"{obj} has no attribute {attribute_name}.\n Make sure the attribute_name is capital case.")
+
+    temp = {}
+    exec_string = f"temp['attribute'] = obj.get{attribute_name}()"
+    # `exec` is used to dynamically execute python code
+    exec(exec_string)
+    return temp['attribute']
+
+
+def set_attribute(obj, attribute_name, val):
+    """
+    Assigns a value to the attribute of an object.
+
+    Args:
+        obj (:obj:`cv2`): A `cv2` object instance.
+        attribute_name (`str`): The name of the attribute. `attribute_name` should have a **capital case** value.
+        val (`int`): The value that would be assigned. `val` is usually of type `int` but it can be of other types as well.
+
+    .. attention::
+        All the attributes can be found using :func:`~src.detector_descriptor.available_attributes`
+
+    Returns:
+        The value of the attribute.
+
+    .. note::
+        This method uses `exec`_
+
+    Examples:
+        .. code-block:: python
+
+            In[1]: from src.detector_descriptor import *
+            In[2]: obj = initialize_detector('FAST', 'type', 1)
+            In[3]: get_attribute(obj, 'Type')
+            Out[9]: 1
+
+    Raises:
+        AttributeError: If the attribute doesn't exist for the specified object `obj`
+
+    See Also:
+        :func:`~src.detector_descriptor.available_attributes`
+        :func:`~src.detector_descriptor.get_attribute`
+
+    .. _exec:
+        https://docs.python.org/3/library/functions.html#exec
+    """
+    if attribute_name not in available_attributes(obj):
+        raise AttributeError(f"{obj} has no attribute {attribute_name}.\n Make sure the attribute_name is capital case.")
+
+    exec_string = f"obj.set{attribute_name}({val})"
+    # `exec` is used to dynamically execute python code
+    exec(exec_string)
+
+
 # Todo: Check better testing techniques
-# Todo: get_attribute
-# Todo: set_attribute
-# Todo: Code fix
