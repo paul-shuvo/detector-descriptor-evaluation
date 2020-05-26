@@ -13,9 +13,13 @@
    - conda create -n  cv37 python=3.7
    - source activate cv37
    - conda install -c menpo opencv
-   - conda install pytest
+   - conda install pytest pytest-cov
+   - pip install codecov
  scripts:
    - pytest
+   - coverage run tests.py
+ after_success:
+    - codecov --token=3d1f9a45-4ffd-4650-bf3f-dfca70cb6c8e
 
 
 #  - sudo apt-get update
