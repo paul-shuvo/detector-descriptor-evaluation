@@ -1,3 +1,4 @@
 opencv-contrib-python ==  4.2.0.34
-opencv-python ==  4.2.0.34
 pytest == 5.4.1
+scikit-image~=0.16.2
+pprint~=0.1
