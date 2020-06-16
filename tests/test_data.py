@@ -5,4 +5,4 @@ import pytest
 
 def test_get_file_paths():
     with pytest.raises(FileNotFoundError):
-        paths = get_file_paths('cambridge', '.ggm')
+        paths = get_image_paths('cambridge', '.ggm')
