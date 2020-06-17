@@ -39,7 +39,7 @@ def get_image_paths(dataset_path, extension):
     path_list = list()
     for file in os.listdir(dataset_path):
         if file.endswith(extension):
-            path_list.append(os.path.join(os.getcwd(), file))
+            path_list.append(os.path.join(dataset_path, file))
     return path_list
 
 
@@ -49,7 +49,7 @@ def load_images(dataset_path, extension):
     for image_path in image_paths:
         _, file_name = os.path.split(image_path)
         image_np = cv2.imread(image_path)
-        image_dataset[file_name] = image_np
+        image_dataset[file_name.split('.')[0]] = image_np
     return image_dataset
 
 
@@ -64,10 +64,10 @@ def load_data(path):
 
 
 # print(get_paths_by_extension('oxord', ('.pgm', '.ppm')))
-# load_images('oxford', ('.pgm', '.ppm'))
+# load_images('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford', ('.pgm', '.ppm'))
 # os.chdir('..')
 # s = get_image_paths('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford',('.pgm', '.ppm'))
 #
 # a = load_data('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\pickle_dump\oxford.pckl')
 # s = 1
-# # dump_data(load_images('oxford', ('.pgm', '.ppm')), os.path.join(os.getcwd(), 'oxford.pckl'))
+# dump_data(load_images('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford', ('.pgm', '.ppm')), os.path.join(os.getcwd(), 'oxford.pckl'))
