@@ -63,6 +63,16 @@ def load_data(path):
         return pkl.load(file)
 
 
+def kp_obj2np(all_keypoints):
+    kp_np = dict()
+    for detector, keypoints in all_keypoints.items():
+        keypoints_to_list = list()
+        for keypoint in keypoints:
+            pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
+            keypoints_to_list.append(pt)
+        kp_np[detector] = np.array(keypoints_to_list)
+        # keypoints_to_list.clear()
+    return kp_np
 # print(get_paths_by_extension('oxord', ('.pgm', '.ppm')))
 # load_images('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford', ('.pgm', '.ppm'))
 # os.chdir('..')
