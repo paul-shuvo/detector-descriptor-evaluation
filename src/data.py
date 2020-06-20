@@ -1,6 +1,9 @@
 import pickle as pkl
 import cv2
 import os
+import numpy as np
+from src import detector_descriptor as dd
+from timeit import default_timer
 
 # Change current directory to the dataset folder
 # os.chdir('..')
@@ -73,11 +76,53 @@ def kp_obj2np(all_keypoints):
         kp_np[detector] = np.array(keypoints_to_list)
         # keypoints_to_list.clear()
     return kp_np
-# print(get_paths_by_extension('oxord', ('.pgm', '.ppm')))
-# load_images('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford', ('.pgm', '.ppm'))
-# os.chdir('..')
-# s = get_image_paths('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford',('.pgm', '.ppm'))
-#
-# a = load_data('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\pickle_dump\oxford.pckl')
-# s = 1
-# dump_data(load_images('D:\Programming Projects\python projects\state-of-the-binary-descriptor\dataset\oxford', ('.pgm', '.ppm')), os.path.join(os.getcwd(), 'oxford.pckl'))
+
+
+def get_exec_time_keypoints(img):
+    keypoints_by_detector = dict()
+    execution_time = dict()
+    all_detectors = dd.get_all_detectors()
+
+    for name, _ in all_detectors.items():
+        detector = dd.initialize_detector(name)
+        start_time = default_timer()
+        keypoints = detector.detect(img)
+        execution_time[name] = default_timer() - start_time
+        keypoints_by_detector[name] = keypoints
+    return execution_time, keypoints_by_detector
+
+
+# dd.print_dictionary(execution_time)
+
+def get_exec_time_keypoints_det(image_set, detector_name):
+    detector = dd.initialize_detector(detector_name)
+    keypoints_by_image = dict()
+    execution_time = dict()
+    i = 0
+    for image in image_set.values():
+        start_time = default_timer()
+        keypoints = detector.detect(image)
+        execution_time[i] = default_timer() - start_time
+        keypoints_by_image[i] = keypoints
+        i += 1
+    return execution_time, keypoints_by_image
+
+
+def get_avg_exec_time_total_kp(image_set):
+    avg_keypoints_by_detector = dict()
+    avg_execution_time = dict()
+    all_detectors = dd.get_all_detectors()
+    num_images = len(image_set.values())
+    for detector_name in all_detectors:
+        avg_keypoints_by_detector[detector_name] = 0
+        avg_execution_time[detector_name] = 0
+    for img in image_set.values():
+        execution_time, keypoints_by_detector = get_exec_time_keypoints(img)
+        for detector_name in all_detectors:
+            avg_keypoints_by_detector[detector_name] += len(keypoints_by_detector[detector_name])
+            avg_execution_time[detector_name] += execution_time[detector_name]
+    for detector_name in all_detectors:
+        avg_keypoints_by_detector[detector_name] = avg_keypoints_by_detector[detector_name] // num_images
+        avg_execution_time[detector_name] = avg_execution_time[detector_name] / num_images
+
+    return avg_execution_time, avg_keypoints_by_detector

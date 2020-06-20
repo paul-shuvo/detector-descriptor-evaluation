@@ -2,3 +2,9 @@ opencv-contrib-python ==  4.2.0.34
 pytest == 5.4.1
 scikit-image~=0.16.2
 pprint~=0.1
+numpy~=1.18.4
+pandas~=1.0.1
+matplotlib~=3.1.1
+seaborn~=0.10.0
+yaml~=0.2.4
+pyyaml~=5.3
