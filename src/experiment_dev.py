@@ -28,6 +28,8 @@ with open(os.path.join('./', 'config.yml'), 'r') as ymlfile:
 print(os.getcwd())
 dataset_path = cfg['dataset']['pckl_path']
 dataset_pckl_name = cfg['dataset']['dataset_type']['oxford']['pckl_name']
-path = os.path.join(dataset_path, dataset_pckl_name)
-
+pckl_path = os.path.join(dataset_path, dataset_pckl_name)
+image_set = util.get_image_set(pckl_path, 'bikes')
+image = image_set['bikes_img1']
+ex.experiment_1_df(image)
 

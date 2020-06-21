@@ -349,7 +349,7 @@ def print_dictionary(dict_obj):
     print(pformat(dict_obj))
 
 
-def initialize_detector(detector_name, variant_type=None, variant=None):
+def initialize_detector(detector_name, variant_type=None, variant=None, additional_args=''):
     """
     Initializes a detector instance and returns it.
 
@@ -357,6 +357,7 @@ def initialize_detector(detector_name, variant_type=None, variant=None):
         detector_name (`str`): Name of the detector.
         variant_type (`str`, optional): Variant type for the specified detector. Defaults to None.
         variant (`int`, optional): Variant of the specified variant type. Defaults to None.
+        variant (`str`, optional): Additional argument passed to `.create()`. Defaults to ''.
 
     Returns:
         (:obj:`cv2`): A `cv2` object instance.
@@ -396,7 +397,8 @@ def initialize_detector(detector_name, variant_type=None, variant=None):
         # `exec_string` is the expression that is being executed by the `exec()` function.
 
         temp = {}
-        exec_string = "temp['instance'] = {0}.create()".format(str(select_detector(detector_name)).split('\'')[1])
+        exec_string = "temp['instance'] = {0}.create({1})".format(str(select_detector(detector_name)).split('\'')[1],
+                                                                  additional_args)
         exec(exec_string)
 
         return temp['instance']
@@ -629,7 +631,7 @@ def set_attribute(obj, attribute_name, val):
 
             In[1]: from src.detector_descriptor import *
             In[2]: obj = initialize_detector('FAST', 'type', 1)
-            In[3]: get_attribute(obj, 'Type')
+            In[3]: set_attribute(obj, 'Type', 2)
             Out[9]: 1
 
     Raises:
