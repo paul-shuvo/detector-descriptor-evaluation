@@ -18,32 +18,55 @@ def cvkp2np(all_keypoints):
     return kp_np
 
 
-def get_alldet_kp_et(img):
+def get_kp(image, detector_name):
+    if detector_name is 'GFTT':
+        detector = dd.initialize_detector(detector_name, additional_args='maxCorners=100000')
+    elif detector_name is 'ORB':
+        detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
+    else:
+        detector = dd.initialize_detector(detector_name)
+    keypoints = detector.detect(image)
+    return keypoints
+
+
+def get_desc(image, kp, descriptor_name):
+    descriptor = dd.initialize_descriptor(descriptor_name)
+    desc = descriptor.compute(image, kp)
+    return desc
+
+
+def get_alldet_kp_et(image):
     keypoints_by_detector = dict()
     execution_time = dict()
     all_detectors = dd.get_all_detectors()
 
     for detector_name, _ in all_detectors.items():
 
-        if detector_name is 'GFTT':
-            detector = dd.initialize_detector(detector_name, additional_args='maxCorners=100000')
-        elif detector_name is 'ORB':
-            detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
-        else:
-            detector = dd.initialize_detector(detector_name)
-
         start_time = default_timer()
-        keypoints = detector.detect(img)
+        keypoints = get_kp(image, detector_name)
         execution_time[detector_name] = default_timer() - start_time
         keypoints_by_detector[detector_name] = keypoints
+    # change it to dict return type
     return execution_time, keypoints_by_detector
 
+
+def get_alldes_desc_et(image, detector_name):
+    kp = get_kp(image, detector_name)
+    descriptors = dict()
+    execution_time = dict()
+    for descriptor_name in dd.get_all_descriptors():
+        # descriptor = dd.initialize_descriptor(descriptor_name)
+        start_time = default_timer()
+        desc = get_desc(image, kp, descriptor_name)
+        execution_time[descriptor_name] = default_timer() - start_time
+        descriptors[descriptor_name] = desc
+    return {'Execution Time': execution_time, 'Descriptors': descriptors}
 
 # dd.print_dictionary(execution_time)
 
 def get_det_kp_et(image_set, detector_name):
     """
-    Returns
+    Returns keypoints for all images in image set
     Args:
         image_set:
         detector_name:

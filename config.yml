@@ -1,7 +1,5 @@
 default:
-  dataset:
-    path: './dataset'
-    pckl_path: './dataset/pickle_dump'
-    dataset_type:
-      oxford:
-        pckl_name: oxford.pckl
+  path:
+    dataset: './dataset'
+    pckl: './dataset/pickle_dump'
+  current_dataset: 'oxford'

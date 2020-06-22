@@ -1,5 +1,6 @@
 from src import data as dt
 from src import util
+from src import detector_descriptor as dd
 import matplotlib.pyplot as plt
 import src.imgop as ip
 import pandas as pd
@@ -46,3 +47,26 @@ def experiment_1_df(image):
         apply(util.highlight_min, subset=['Execution Time', 'Number of Keypoints'])
 
     return df
+
+
+def exp_desc_et_plt(image_set):
+    f, ax = plt.subplots()
+    des_et_kp = dict()
+    image_num = 0
+    for name, image in image_set.items():
+        des_et_kp[image_num] = ip.get_alldes_desc_et(image, 'KAZE')
+        image_num += 1
+
+    kp_size_arr = []
+    for values in des_et_kp.values():
+        kp_size_arr.append(values['Descriptors']['LATCH'][1].shape[0])
+
+    plot_data_desc = dict()
+    for descriptor_name in dd.get_all_descriptors():
+        plot_data_desc[descriptor_name] = list()
+        for image_num, values in des_et_kp.items():
+            plot_data_desc[descriptor_name].append(values['Execution Time'][descriptor_name])
+
+    for descriptor_name, execution_times in plot_data_desc.items():
+        ax.plot(kp_size_arr, execution_times, label=descriptor_name)
+    return ax

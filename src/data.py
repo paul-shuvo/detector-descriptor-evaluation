@@ -13,7 +13,7 @@ from timeit import default_timer
 # print(os.getcwd())
 
 
-def get_image_paths(dataset_path, extension):
+def get_paths(dataset_path, extension):
     """
     Returns a list of file paths ending in specified file extension(s) (`extension`)
     Args:
@@ -47,7 +47,7 @@ def get_image_paths(dataset_path, extension):
 
 
 def load_images(dataset_path, extension):
-    image_paths = get_image_paths(dataset_path, extension)
+    image_paths = get_paths(dataset_path, extension)
     image_dataset = dict()
     for image_path in image_paths:
         _, file_name = os.path.split(image_path)
@@ -55,6 +55,17 @@ def load_images(dataset_path, extension):
         image_dataset[file_name.split('.')[0]] = image_np
     return image_dataset
 
+
+def load_labels(dataset_path, extension):
+    label_paths = get_paths(dataset_path, extension)
+    label_dataset = dict()
+    for label_path in label_paths:
+        _, file_name = os.path.split(label_path)
+        label_np = np.loadtxt(label_path)
+        image_set_name = file_name.split('_')[0]
+        image_num = file_name.split('to')[1][0]
+        label_dataset[f'{image_set_name}_img{image_num}'] = label_np
+    return label_dataset
 
 def dump_data(data, path):
     with open(path, 'wb') as file:
