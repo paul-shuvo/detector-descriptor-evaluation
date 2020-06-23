@@ -652,4 +652,6 @@ def set_attribute(obj, attribute_name, val):
     exec(exec_string)
 
 
+all_detectors = list(get_all_detectors().keys())
+all_descriptors = list(get_all_descriptors().keys())
 # Todo: Check better testing techniques

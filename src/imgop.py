@@ -1,7 +1,4 @@
-# from skimage import data
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from timeit import default_timer
 import src.detector_descriptor as dd
 
@@ -27,6 +24,13 @@ def get_kp(image, detector_name):
         detector = dd.initialize_detector(detector_name)
     keypoints = detector.detect(image)
     return keypoints
+
+
+def get_desc_by_det(image, detector_name, descriptor_name):
+    descriptor = dd.initialize_descriptor(descriptor_name)
+    kp = get_kp(image, detector_name)
+    desc = descriptor.compute(image, kp)
+    return desc
 
 
 def get_desc(image, kp, descriptor_name):
