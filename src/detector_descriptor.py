@@ -655,3 +655,4 @@ def set_attribute(obj, attribute_name, val):
 all_detectors = list(get_all_detectors().keys())
 all_descriptors = list(get_all_descriptors().keys())
 # Todo: Check better testing techniques
+# Todo: change eval to ast.literal_eval

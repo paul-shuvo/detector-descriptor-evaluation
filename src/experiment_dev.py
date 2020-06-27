@@ -47,7 +47,7 @@ label_path = os.path.join(pckl_path, pckl_name)
 labels = dt.load_data(label_path)
 # dataset_pckl_name = cfg['dataset']['dataset_type']['oxford']['pckl_name']
 data_path = os.path.join(pckl_path, ''.join([dataset, '.pckl']))
-image_set_name = 'bikes'
+image_set_name = 'graf'
 image_set = util.get_image_set(data_path, image_set_name)
 # image = image_set['bikes_img6']
 # ex.experiment_1_df(image)
@@ -72,33 +72,26 @@ image_set = util.get_image_set(data_path, image_set_name)
 #
 # for key, val in all['Execution Time'].items():
 #     print(f'{key}: {val}')
-image_nums = [1, 3]
-image1 = image_set[f'{image_set_name}_img{image_nums[0]}']
-image2 = image_set[f'{image_set_name}_img{image_nums[1]}']
-label_name = f'{image_set_name}_img{image_nums[1]}'
-label_homography = labels[label_name]
-detector_name = 'KAZE'
 
 
-for descriptor_name in dd.all_descriptors:
-    # print(descriptor_name)
-    # if descriptor_name in ['DAISY', 'KAZE']:
-    #     continue
-    kp1, desc1 = ip.get_desc_by_det(image1, detector_name, descriptor_name)
-    # print(desc1.dtype)
-    kp2, desc2 = ip.get_desc_by_det(image2, detector_name, descriptor_name)
+def get_inlier_ratio(
+        image_tuple,
+        label_homography,
+        detector_name,
+        descriptor_name,
+        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
+        nn_match_ratio=0.8,
+        inlier_threshold=2.5):
 
-    # bfm = cv2.BFMatcher(cv2.DescriptorMatcher_BRUTEFORCE_HAMMING, crossCheck=True)
-    # nn_matches = bfm.match(desc1, desc2, 2)
-    # matches = sorted(matches, key=lambda x: x.distance)
+    kp1, desc1 = ip.get_desc_by_det(image_tuple[0], detector_name, descriptor_name)
+    kp2, desc2 = ip.get_desc_by_det(image_tuple[1], detector_name, descriptor_name)
 
-    matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_BRUTEFORCE)
+    matcher = cv2.DescriptorMatcher_create(matcher_type)
     nn_matches = matcher.knnMatch(desc1, desc2, 2)
-    # matches = matcher.knnMatch(desc1, desc2, 2)
 
     matched1 = []
     matched2 = []
-    nn_match_ratio = 0.8  # Nearest neighbor matching ratio
+    # nn_match_ratio = 0.8  # Nearest neighbor matching ratio
     for m, n in nn_matches:
         if m.distance < nn_match_ratio * n.distance:
             matched1.append(kp1[m.queryIdx])
@@ -107,7 +100,7 @@ for descriptor_name in dd.all_descriptors:
     inliers1 = []
     inliers2 = []
     good_matches = []
-    inlier_threshold = 2.5  # Distance threshold to identify inliers with homography check
+    # inlier_threshold = 2.5  # Distance threshold to identify inliers with homography check
     for i, m in enumerate(matched1):
         col = np.ones((3, 1), dtype=np.float64)
         col[0:2, 0] = m.pt
@@ -121,12 +114,13 @@ for descriptor_name in dd.all_descriptors:
             good_matches.append(cv2.DMatch(len(inliers1), len(inliers2), 0))
             inliers1.append(matched1[i])
             inliers2.append(matched2[i])
-    # res = np.empty((max(image1.shape[0], image2.shape[0]), img1.shape[1] + img2.shape[1], 3), dtype=np.uint8)
-    # img3 = cv2.drawMatches(image1, kp1, image2, kp2, matches[:10], None, flags=2)
+
     res_image = cv2.drawMatches(image1, inliers1, image2, inliers2, good_matches, None, flags=2)
-    # cv.imwrite("akaze_result.png", res)
-    inlier_ratio = len(inliers1) / float(len(matched1))
-    print(f'{descriptor_name}: {inlier_ratio}')
+    try:
+        inlier_ratio = len(inliers1) / float(len(matched1))
+    except ZeroDivisionError:
+        inlier_ratio = 0
+    # print(f'{descriptor_name}: {inlier_ratio}')
     # print(f'{descriptor_name} Matching Results')
     # print('*******************************')
     # print('# Keypoints 1:                        \t', len(kp1))
@@ -134,18 +128,81 @@ for descriptor_name in dd.all_descriptors:
     # print('# Matches:                            \t', len(matched1))
     # print('# Inliers:                            \t', len(inliers1))
     # print('# Inliers Ratio:                      \t', inlier_ratio)
-    # cv.imshow('result', res)
-    # cv.waitKey()
-    d = 1
-    # matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_BRUTEFORCE_HAMMING)
-    # nn_matches = matcher.knnMatch(desc1, desc2, 2)
-    # img3 = cv2.drawMatches(image1, kp1, image2, kp2, matches[:10], None, flags=2)
+    return res_image, inlier_ratio
+
+def get_alldet_inlier_ratio(
+        image_tuple,
+        label_homography,
+        descriptor_name,
+        excluded_det=None,
+        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
+        nn_match_ratio=0.8,
+        inlier_threshold=2.5):
+    if excluded_det is None:
+        excluded_det = []
+    alldet_inlier_ratio = dict()
+    for detector_name in dd.get_all_detectors():
+        if detector_name in excluded_det:
+            continue
+        alldet_inlier_ratio[detector_name] = get_inlier_ratio(image_tuple, label_homography, detector_name,
+                                                              descriptor_name, matcher_type, nn_match_ratio,
+                                                              inlier_threshold)
+    return alldet_inlier_ratio
+
+
+def get_alldes_inlier_ratio(
+        image_tuple,
+        label_homography,
+        detector_name,
+        excluded_des=None,
+        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
+        nn_match_ratio=0.8,
+        inlier_threshold=2.5):
+    if excluded_des is None:
+        excluded_des = []
+    alldes_inlier_ratio = dict()
+    for descriptor_name in dd.get_all_descriptors():
+        if descriptor_name in excluded_des:
+            continue
+        alldes_inlier_ratio[descriptor_name] = get_inlier_ratio(image_tuple, label_homography, detector_name,
+                                                                descriptor_name, matcher_type, nn_match_ratio,
+                                                                inlier_threshold)
+    return alldes_inlier_ratio
+
+image_nums = (1, 3)
+image1 = image_set[f'{image_set_name}_img{image_nums[0]}']
+image2 = image_set[f'{image_set_name}_img{image_nums[1]}']
+label_name = f'{image_set_name}_img{image_nums[1]}'
+label_homography = labels[label_name]
+detector_name = 'AKAZE'
+descriptor_name = 'ORB'
+
+# for descriptor_name in dd.all_descriptors:
+#     if descriptor_name in ['DAISY', 'KAZE']:
+#         continue
+#     res_image, inlier_ratio = get_inlier_ratio((image1, image2), label_homography, detector_name,
+#                                                descriptor_name)
+#     print(f'{descriptor_name}: {inlier_ratio}')
+#     plt.title(descriptor_name)
+#     plt.imshow(res_image)
+#     plt.show()
+
+# alldet_inlier_ratio = get_alldet_inlier_ratio((image1, image2), label_homography, descriptor_name)
+#
+# for detector_name, values in alldet_inlier_ratio.items():
+#     res_image, inlier_ratio = values
+#     print(f'{detector_name}: {inlier_ratio}')
+#     plt.title(detector_name)
+#     plt.imshow(res_image)
+#     plt.show()
+
+alldes_inlier_ratio = get_alldes_inlier_ratio((image1, image2), label_homography, detector_name)
+
+for descriptor_name, values in alldes_inlier_ratio.items():
+    res_image, inlier_ratio = values
+    print(f'{descriptor_name}: {inlier_ratio}')
     plt.title(descriptor_name)
     plt.imshow(res_image)
     plt.show()
-# ax = ex.exp_desc_et_plt(image_set)
-# ax.legend(bbox_to_anchor=(1.05, 1.0), loc="upper left")
-# ax.set_xlabel("Image num")
-# ax.set_ylabel("Execution Time")
-# plt.show()
+
 s = 1

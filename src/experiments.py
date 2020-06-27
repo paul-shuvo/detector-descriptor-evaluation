@@ -6,10 +6,11 @@ import src.imgop as ip
 import pandas as pd
 
 
-def experiment_1_plt(image):
+def exp_det_kpet_plt(image, ax):
+    # fig, ax = plt.subplots(1,2)
     execution_time, keypoints_by_detector = ip.get_alldet_kp_et(image)
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111)
     plot_data = {}
     for name in execution_time.keys():
         total_keypoints = len(keypoints_by_detector[name])
@@ -23,12 +24,12 @@ def experiment_1_plt(image):
         ax.scatter(x, y, c=colors[i], s=10, label=key)
         ax.annotate(key, xy=(x+0.02, y), textcoords='data')
         i += 1
-    plt.grid(True)
-    plt.legend(bbox_to_anchor=(1.05, 1.0), loc="upper left")
-    plt.xlabel("Execution Time")
-    plt.ylabel("Number of Keypoints")
-    plt.show()
-
+    # ax.grid(True)
+    # ax.legend(bbox_to_anchor=(1.05, 1.0), loc="upper left")
+    ax.set_xlabel("Execution Time")
+    ax.set_ylabel("Number of Keypoints")
+    # plt.show()
+    # return ax
 
 def experiment_1_df(image):
     execution_time, keypoints_by_detector = ip.get_alldet_kp_et(image)
@@ -49,12 +50,12 @@ def experiment_1_df(image):
     return df
 
 
-def exp_desc_et_plt(image_set):
+def exp_desc_et_plt(image_set, detector_name):
     f, ax = plt.subplots()
     des_et_kp = dict()
     image_num = 0
     for name, image in image_set.items():
-        des_et_kp[image_num] = ip.get_alldes_desc_et(image, 'KAZE')
+        des_et_kp[image_num] = ip.get_alldes_desc_et(image, detector_name)
         image_num += 1
 
     kp_size_arr = []

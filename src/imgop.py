@@ -1,16 +1,91 @@
 import numpy as np
 from timeit import default_timer
 import src.detector_descriptor as dd
+from itertools import chain
 
-def cvkp2np(all_keypoints):
 
+def get_unique_kpnp(kp_all):
+    """
+    Get all unique numpy keypoints from a dictionary containing groups of keypoints.
+    Args:
+        all_kpnp(`dict`):  A dictionary containing groups of Opencv keypoint object.
+
+    Returns:
+        All unique numpy keypoints from a dictionary containing groups of keypoints.
+    """
+    kpnp_all = cvkp2np_all(kp_all)
+    kpnp_unique = np.array(list(chain(*[value.tolist() for value in kpnp_all.values()])))
+    kpnp_unique = np.unique(kpnp_unique, axis=0)
+    return kpnp_unique
+
+
+def get_kpnp_frequency(kpnp_all, kpnp_unique):
+    """
+    Compute frrequncy for all nique kpnp
+    Args:
+        kpnp_all:
+        kpnp_unique:
+
+    Returns:
+
+    """
+    pt_freq = np.zeros((kpnp_unique.shape[0], 1))
+    for i in range(0, kpnp_unique.shape[0]):
+        for key in kpnp_all.keys():
+            if kpnp_unique[i] in kpnp_all[key]:
+                pt_freq[i] += 1
+    kpnp_unique_freq = np.hstack((kpnp_unique, pt_freq))
+    return kpnp_unique_freq
+
+
+def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
+    kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
+    index_matched = np.where(kpnp_freq[:,2] == frequency)
+    kpnp_by_frequency = kpnp_unique[index_matched]
+    return kpnp_by_frequency
+
+
+def cvkp2np(keypoints):
+    """
+    Converts an array of opencv keypoint object to numpy ndarray that contains
+    all the keypoint location.
+
+    .. important:
+        The locations of the keypoints are rounded.
+
+    Args:
+        keypoints(`obj`): OpenCV keypoint object
+
+    Returns:
+        (`ndarray`): An ndarray of `dtype=int` conatining the `x, y` locations of the
+        keypoints.
+
+    """
+    keypoints_to_list = list()
+    for keypoint in keypoints:
+        pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
+        keypoints_to_list.append(pt)
+    return np.array(keypoints_to_list)
+
+
+def cvkp2np_all(keypoints_all):
+    """
+
+    Args:
+        keypoints_all(`dict`): A `dict` containing OpenCV keypoint objects for different
+        groups(can be different detector or image).
+
+    Returns:
+        (`dict`): A `dict` containing converted OpenCV keypoints to `ndarray`s
+        of `dtype=int` for different groups(can be different detector or image).
+    """
     kp_np = dict()
-    for detector, keypoints in all_keypoints.items():
-        keypoints_to_list = list()
-        for keypoint in keypoints:
-            pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
-            keypoints_to_list.append(pt)
-        kp_np[detector] = np.array(keypoints_to_list)
+    for key, keypoints in keypoints_all.items():
+        # keypoints_to_list = list()
+        # for keypoint in keypoints:
+        #     pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
+        #     keypoints_to_list.append(pt)
+        kp_np[key] = cvkp2np(keypoints)
 
     return kp_np
 
@@ -60,6 +135,8 @@ def get_alldes_desc_et(image, detector_name):
     execution_time = dict()
     for descriptor_name in dd.get_all_descriptors():
         # descriptor = dd.initialize_descriptor(descriptor_name)
+        if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE':
+            continue
         start_time = default_timer()
         desc = get_desc(image, kp, descriptor_name)
         execution_time[descriptor_name] = default_timer() - start_time

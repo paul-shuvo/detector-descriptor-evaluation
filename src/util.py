@@ -48,7 +48,7 @@ def get_image_set(path, image_prefix='all'):
 def show_image_set(images):
     fig, axs = plt.subplots(len(images) // 3, 3, figsize=(10, 5), sharex=True, sharey=True)
     i = 0
-    for img in images.values():
-        axs[i // 3, i % 3].imshow(img)
+    for image in images.values():
+        axs[i // 3, i % 3].imshow(image)
         i += 1
     plt.show()
