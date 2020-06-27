@@ -21,7 +21,7 @@ def get_unique_kpnp(kp_all):
 
 def get_kpnp_frequency(kpnp_all, kpnp_unique):
     """
-    Compute frrequncy for all nique kpnp
+    Compute frrequncy for all unique kpnp
     Args:
         kpnp_all:
         kpnp_unique:
@@ -38,14 +38,14 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
     return kpnp_unique_freq
 
 
-def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
-    kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
-    index_matched = np.where(kpnp_freq[:,2] == frequency)
+def get_kpnp_by_frequency(kpnp_freq, kpnp_unique, frequency):
+    # kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
+    index_matched = np.where(kpnp_freq[:, 2] == frequency)
     kpnp_by_frequency = kpnp_unique[index_matched]
     return kpnp_by_frequency
 
 
-def cvkp2np(keypoints):
+def cvkp2np(keypoints, round_=True):
     """
     Converts an array of opencv keypoint object to numpy ndarray that contains
     all the keypoint location.
@@ -63,7 +63,10 @@ def cvkp2np(keypoints):
     """
     keypoints_to_list = list()
     for keypoint in keypoints:
-        pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
+        if round_:
+            pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
+        else:
+            pt = (keypoint.pt[0], keypoint.pt[1])
         keypoints_to_list.append(pt)
     return np.array(keypoints_to_list)
 
@@ -91,9 +94,9 @@ def cvkp2np_all(keypoints_all):
 
 
 def get_kp(image, detector_name):
-    if detector_name is 'GFTT':
-        detector = dd.initialize_detector(detector_name, additional_args='maxCorners=100000')
-    elif detector_name is 'ORB':
+    # if detector_name is 'GFTT':
+    #     detector = dd.initialize_detector(detector_name, additional_args='maxCorners=100000')
+    if detector_name is 'ORB':
         detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
     else:
         detector = dd.initialize_detector(detector_name)
