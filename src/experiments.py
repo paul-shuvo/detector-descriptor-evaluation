@@ -55,8 +55,7 @@ def exp_desc_et_plt(image_set, detector_name, ax):
     des_et_kp = dict()
     image_num = 0
     # print(detector_name)
-    for name, image in image_set.items():
-        print(name)
+    for image_name, image in image_set.items():
         des_et_kp[image_num] = ip.get_alldes_desc_et(image, detector_name)
         image_num += 1
 
@@ -65,7 +64,7 @@ def exp_desc_et_plt(image_set, detector_name, ax):
 
 
     for values in des_et_kp.values():
-        kp_size_arr.append('{0} \nImage: \n{1} {2}'.format(str(values['Descriptors']['ORB'][1].shape[0]),
+        kp_size_arr.append('{0} \nImage: \n{1} {2}'.format(str(values['Number of Keypoints']),
                                                           list(image_set.keys())[0].split('_')[0],
                                                           image_num))
         # val = values['Descriptors']['ORB'][1].shape[0]

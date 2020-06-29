@@ -94,8 +94,8 @@ def cvkp2np_all(keypoints_all):
 
 def get_kp(image, detector_name):
     if detector_name is 'GFTT':
-        detector = dd.initialize_detector(detector_name, additional_args='maxCorners=10000')
-    if detector_name is 'ORB':
+        detector = dd.initialize_detector(detector_name, additional_args='maxCorners=15000')
+    elif detector_name is 'ORB':
         detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
     else:
         detector = dd.initialize_detector(detector_name)
@@ -156,7 +156,7 @@ def get_alldet_kp_et(image):
 def get_alldes_desc_et(image, detector_name):
     kp = get_kp(image, detector_name)
     # print(image)
-    # print(len(kp))
+    # print(f'{detector_name}: {image_name}: {len(kp)}')
     descriptors = dict()
     execution_time = dict()
     for descriptor_name in dd.all_descriptors:
@@ -167,7 +167,7 @@ def get_alldes_desc_et(image, detector_name):
         desc = get_desc(image, kp, descriptor_name)
         execution_time[descriptor_name] = default_timer() - start_time
         descriptors[descriptor_name] = desc
-    return {'Execution Time': execution_time, 'Descriptors': descriptors}
+    return {'Execution Time': execution_time, 'Descriptors': descriptors, 'Number of Keypoints': len(kp)}
 
 # dd.print_dictionary(execution_time)
 

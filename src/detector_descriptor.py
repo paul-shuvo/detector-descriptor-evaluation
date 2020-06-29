@@ -40,7 +40,7 @@ def get_all_detectors():
         'FAST': cv2.FastFeatureDetector,
         'BRISK': cv2.BRISK,
         'ORB': cv2.ORB,
-        'GFTT': cv2.GFTTDetector,
+        # 'GFTT': cv2.GFTTDetector,
         'HarrisLaplace': cv2.xfeatures2d_HarrisLaplaceFeatureDetector,
         'StarDetector': cv2.xfeatures2d_StarDetector
     }
