@@ -92,10 +92,9 @@ def cvkp2np_all(keypoints_all):
 
     return kp_np
 
-
 def get_kp(image, detector_name):
-    # if detector_name is 'GFTT':
-    #     detector = dd.initialize_detector(detector_name, additional_args='maxCorners=100000')
+    if detector_name is 'GFTT':
+        detector = dd.initialize_detector(detector_name, additional_args='maxCorners=10000')
     if detector_name is 'ORB':
         detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
     else:
@@ -103,6 +102,28 @@ def get_kp(image, detector_name):
     keypoints = detector.detect(image)
     return keypoints
 
+
+def get_det_kp_et(image_set, detector_name):
+    """
+    Returns keypoints for all images in image set
+    Args:
+        image_set:
+        detector_name:
+
+    Returns:
+
+    """
+
+    keypoints_by_image = dict()
+    execution_time = dict()
+    i = 0
+    for image in image_set.values():
+        start_time = default_timer()
+        keypoints = get_kp(image, detector_name)
+        execution_time[i] = default_timer() - start_time
+        keypoints_by_image[i] = keypoints
+        i += 1
+    return execution_time, keypoints_by_image
 
 def get_desc_by_det(image, detector_name, descriptor_name):
     descriptor = dd.initialize_descriptor(descriptor_name)
@@ -134,6 +155,8 @@ def get_alldet_kp_et(image):
 
 def get_alldes_desc_et(image, detector_name):
     kp = get_kp(image, detector_name)
+    # print(image)
+    # print(len(kp))
     descriptors = dict()
     execution_time = dict()
     for descriptor_name in dd.all_descriptors:
@@ -148,33 +171,7 @@ def get_alldes_desc_et(image, detector_name):
 
 # dd.print_dictionary(execution_time)
 
-def get_det_kp_et(image_set, detector_name):
-    """
-    Returns keypoints for all images in image set
-    Args:
-        image_set:
-        detector_name:
 
-    Returns:
-
-    """
-    if detector_name is 'GFTT':
-        detector = dd.initialize_detector(detector_name, additional_args='maxCorners=100000')
-    elif detector_name is 'ORB':
-        detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
-    else:
-        detector = dd.initialize_detector(detector_name)
-
-    keypoints_by_image = dict()
-    execution_time = dict()
-    i = 0
-    for image in image_set.values():
-        start_time = default_timer()
-        keypoints = detector.detect(image)
-        execution_time[i] = default_timer() - start_time
-        keypoints_by_image[i] = keypoints
-        i += 1
-    return execution_time, keypoints_by_image
 
 
 def get_det_avg_numkp_et(image_set):

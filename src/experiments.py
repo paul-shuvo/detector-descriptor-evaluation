@@ -54,16 +54,28 @@ def exp_desc_et_plt(image_set, detector_name, ax):
     # f, axs = plt.subplots(6,1)
     des_et_kp = dict()
     image_num = 0
+    # print(detector_name)
     for name, image in image_set.items():
+        print(name)
         des_et_kp[image_num] = ip.get_alldes_desc_et(image, detector_name)
         image_num += 1
 
     kp_size_arr = []
     image_num = 1
+
+
     for values in des_et_kp.values():
-        kp_size_arr.append('{0} \nImage: \n{1} {2}'.format(str(values['Descriptors']['LATCH'][1].shape[0]),
+        kp_size_arr.append('{0} \nImage: \n{1} {2}'.format(str(values['Descriptors']['ORB'][1].shape[0]),
                                                           list(image_set.keys())[0].split('_')[0],
                                                           image_num))
+        # val = values['Descriptors']['ORB'][1].shape[0]
+        # print(f'vaue is:{val}')
+        # for descriptor_name in dd.all_descriptors:
+        #     if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE':
+        #         continue
+        #     v = values['Descriptors'][descriptor_name][1].shape[0]
+        #     print(f'{descriptor_name}: {v}')
+        # print('------------')
         image_num += 1
 
         # print(values['Descriptors']['LATCH'][1].shape[0])
@@ -80,7 +92,9 @@ def exp_desc_et_plt(image_set, detector_name, ax):
     markers = ['+', '^', 'o', 's', '*', 'x', '+', '^', 'o', 's', '*', 'x']
     i = 0
     for descriptor_name, execution_times in plot_data_desc.items():
-
-        ax.scatter(kp_size_arr, execution_times, c=colors[i], marker=markers[i], label=descriptor_name)
-        i += 1
+        if descriptor_name is 'AKAZE':
+            ax.scatter(kp_size_arr, execution_times, c=colors[i], marker='p', label=descriptor_name)
+        else:
+            ax.scatter(kp_size_arr, execution_times, c=colors[i], marker=markers[i], label=descriptor_name)
+            i += 1
     # return axs
