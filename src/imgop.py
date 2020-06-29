@@ -136,7 +136,7 @@ def get_alldes_desc_et(image, detector_name):
     kp = get_kp(image, detector_name)
     descriptors = dict()
     execution_time = dict()
-    for descriptor_name in dd.get_all_descriptors():
+    for descriptor_name in dd.all_descriptors:
         # descriptor = dd.initialize_descriptor(descriptor_name)
         if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE':
             continue

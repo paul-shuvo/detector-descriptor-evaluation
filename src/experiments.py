@@ -50,8 +50,8 @@ def experiment_1_df(image):
     return df
 
 
-def exp_desc_et_plt(image_set, detector_name):
-    f, ax = plt.subplots()
+def exp_desc_et_plt(image_set, detector_name, ax):
+    # f, axs = plt.subplots(6,1)
     des_et_kp = dict()
     image_num = 0
     for name, image in image_set.items():
@@ -59,15 +59,28 @@ def exp_desc_et_plt(image_set, detector_name):
         image_num += 1
 
     kp_size_arr = []
+    image_num = 1
     for values in des_et_kp.values():
-        kp_size_arr.append(values['Descriptors']['LATCH'][1].shape[0])
+        kp_size_arr.append('{0} \nImage: \n{1} {2}'.format(str(values['Descriptors']['LATCH'][1].shape[0]),
+                                                          list(image_set.keys())[0].split('_')[0],
+                                                          image_num))
+        image_num += 1
+
+        # print(values['Descriptors']['LATCH'][1].shape[0])
 
     plot_data_desc = dict()
-    for descriptor_name in dd.get_all_descriptors():
+    for descriptor_name in dd.all_descriptors:
+        if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE':
+            continue
         plot_data_desc[descriptor_name] = list()
         for image_num, values in des_et_kp.items():
             plot_data_desc[descriptor_name].append(values['Execution Time'][descriptor_name])
 
+    colors = ['olive', 'green', 'red', 'cyan', 'blue', 'purple', 'green', 'grey', 'orange', 'indigo']
+    markers = ['+', '^', 'o', 's', '*', 'x', '+', '^', 'o', 's', '*', 'x']
+    i = 0
     for descriptor_name, execution_times in plot_data_desc.items():
-        ax.plot(kp_size_arr, execution_times, label=descriptor_name)
-    return ax
+
+        ax.scatter(kp_size_arr, execution_times, c=colors[i], marker=markers[i], label=descriptor_name)
+        i += 1
+    # return axs
