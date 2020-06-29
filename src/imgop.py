@@ -1,6 +1,7 @@
 import numpy as np
 from timeit import default_timer
 import src.detector_descriptor as dd
+from src import util
 from itertools import chain
 
 
@@ -170,10 +171,6 @@ def get_alldes_desc_et(image, detector_name):
     return {'Execution Time': execution_time, 'Descriptors': descriptors, 'Number of Keypoints': len(kp)}
 
 # dd.print_dictionary(execution_time)
-
-
-
-
 def get_det_avg_numkp_et(image_set):
     avg_keypoints_by_detector = dict()
     avg_execution_time = dict()
@@ -192,3 +189,66 @@ def get_det_avg_numkp_et(image_set):
         avg_execution_time[detector_name] = avg_execution_time[detector_name] / num_images
 
     return avg_execution_time, avg_keypoints_by_detector
+
+
+# from itertools import chain
+
+
+# def get_kp_frequency(kp_np_det, kp_np_unique):
+#     point_freq = np.zeros((kp_np_unique.shape[0], 1))
+#     for i in range(0, kp_np_unique.shape[0]):
+#         for detector in dd.get_all_detectors().keys():
+#             if kp_np_unique[i] in kp_np_det[detector]:
+#                 point_freq[i] += 1
+#     kp_np_unique_freq = np.hstack((kp_np_unique, point_freq))
+#     return kp_np_unique_freq
+#
+# def get_kpnp_filtered_frequency(kp_np_det, kp_np_unique, frequency):
+#     kp_freq = get_kp_frequency(kp_np_det, kp_np_unique)
+#     index_matched = np.where(kp_freq[:,2] == frequency)
+#     kp_filtered_frequency = kp_np_unique[index_matched]
+#     return kp_filtered_frequency
+
+def get_matched_kp_ratio_det(kpnp_det, frequency):
+    kpnp_unique= np.unique(np.array(list(chain(*[value.tolist() for value in kpnp_det.values()]))), axis=0,)
+    kpnp_filtered_frequency = get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency)
+    matched_kp_ratio_det = dict()
+
+    for detector, kp in kpnp_det.items():
+        kp = kp.tolist()
+        total_kp_det = len(kp)
+        matched_kp_total = 0
+        for kp_filtered in kpnp_filtered_frequency.tolist():
+            if kp_filtered in kp:
+                matched_kp_total += 1
+        matched_kp_ratio_det[detector] = matched_kp_total/total_kp_det
+
+    return matched_kp_ratio_det
+
+
+def get_matched_kpnp_ratio_det(kpnp_det, frequency):
+    kpnp_unique= np.unique(np.array(list(chain(*[value.tolist() for value in kpnp_det.values()]))), axis=0,)
+    kpnp_filtered_by_frequency = get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency)
+    matched_kpnp_ratio_det = dict()
+
+    for detector, kp in kpnp_det.items():
+        kpnp = kp.tolist()
+        total_kpnp_det = len(kp)
+        matched_kpnp_total = 0
+        for kpnp_filtered in kpnp_filtered_by_frequency.tolist():
+            if kpnp_filtered in kpnp:
+                matched_kpnp_total += 1
+        matched_kpnp_ratio_det[detector] = matched_kpnp_total/total_kpnp_det
+
+    return matched_kpnp_ratio_det
+
+def get_kpnp_det_arr(image_set_name, pckl_path):
+    image_set_ = util.get_image_set(pckl_path, image_set_name)
+    kpnp_det_arr = []
+    # image_num = 4
+    for image_num in range(1,7):
+    #     print(1)
+        image = image_set_['{0}_img{1}'.format(image_set_name, image_num)]
+        execution_time, all_keypoints = get_alldet_kp_et(image)
+        kpnp_det_arr.append(cvkp2np_all(all_keypoints))
+    return kpnp_det_arr
