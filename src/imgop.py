@@ -3,7 +3,7 @@ from timeit import default_timer
 import src.detector_descriptor as dd
 from src import util
 from itertools import chain
-
+import cv2
 
 def get_unique_kpnp(kp_all):
     """
@@ -39,11 +39,34 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
     return kpnp_unique_freq
 
 
-def get_kpnp_by_frequency(kpnp_freq, kpnp_unique, frequency):
-    # kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
-    index_matched = np.where(kpnp_freq[:, 2] == frequency)
-    kpnp_by_frequency = kpnp_unique[index_matched]
-    return kpnp_by_frequency
+# def get_kpnp_by_frequency(kpnp_freq, kpnp_unique, frequency):
+#     # kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
+#     print(kpnp_freq.keys())
+#     index_matched = np.where(kpnp_freq[:, 2] == frequency)
+#     kpnp_by_frequency = kpnp_unique[index_matched]
+#     return kpnp_by_frequency
+
+def get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency):
+    kpnp_freq = get_kpnp_frequency(kpnp_det, kpnp_unique)
+    index_matched = np.where(kpnp_freq[:,2] == frequency)
+    kpnp_filtered_by_frequency = kpnp_unique[index_matched]
+    return kpnp_filtered_by_frequency
+
+def get_kpnp_frequency_det_sigma(image, detector_name, sigma_values):
+    kp_all = {}
+    for sigma in sigma_values:
+        if sigma is 0:
+            image_blur = image
+        else:
+            ksize = np.int(np.round(((((sigma - 0.8)/0.3) + 1)/0.5)+1))
+            if ksize % 2 == 0:
+                ksize += 1
+            image_blur = cv2.GaussianBlur(image,(ksize, ksize),0)
+        kp_all[sigma] = get_kp(image_blur, detector_name)
+    kpnp_all = cvkp2np_all(kp_all)
+    kpnp_unique = get_unique_kpnp(kp_all)
+    kpnp_all_frequency = get_kpnp_frequency(kpnp_all, kpnp_unique)
+    return kpnp_unique, kpnp_all_frequency
 
 
 def cvkp2np(keypoints, round_=True):

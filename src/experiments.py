@@ -4,6 +4,7 @@ from src import detector_descriptor as dd
 import matplotlib.pyplot as plt
 import src.imgop as ip
 import pandas as pd
+import numpy as np
 
 
 def exp_det_kpet_plt(image, ax):
@@ -97,3 +98,42 @@ def exp_desc_et_plt(image_set, detector_name, ax):
             ax.scatter(kp_size_arr, execution_times, c=colors[i], marker=markers[i], label=descriptor_name)
             i += 1
     # return axs
+
+
+def exp_kp_freq_frac_plt(image_set_name, pckl_path, frequencies, axs, row, col):
+    kpnp_det_arr = ip.get_kpnp_det_arr(image_set_name, pckl_path)
+    #     plot_data_arr = get_plot_data_arr(kp_np_det_arr, frequencies)
+    plot_data_arr = []
+    for kpnp_det in kpnp_det_arr:
+        matched_kpnp_ratio_det_freq = dict()
+        for frequency in frequencies:
+            matched_kpnp_ratio_det_freq[frequency] = ip.get_matched_kpnp_ratio_det(kpnp_det, frequency)
+
+        plot_data = dict()
+        for detector in dd.all_detectors:
+            plot_data_det = list()
+            for frequency in matched_kpnp_ratio_det_freq.keys():
+                plot_data_det.append(matched_kpnp_ratio_det_freq[frequency][detector])
+            plot_data[detector] = np.array(plot_data_det)
+        plot_data_arr.append(plot_data)
+
+    #     plt.style.use('bmh')
+    colors = ['olive', 'green', 'red', 'cyan', 'blue', 'purple', 'green', 'black', 'orange', 'indigo']
+    markers = ['+', '^', 'o', 's', '*', 'x', '+', '^', 'o', 's', '*', 'x']
+    linestyle_ = ['-', '--', '-.', ':', '-', '--', '-.', ':', '-', '--', '-.', ':']
+    row = row
+    col = col
+    #     fig, axs = plt.subplots(row, col, figsize=(12,8))
+    axs_count = 0
+    for plot_data in plot_data_arr:
+        i = 0
+        for detector, data in plot_data.items():
+            axs[axs_count // col, axs_count % col].plot(frequencies, data, label=detector, linestyle=linestyle_[i],
+                                                        linewidth=1.5, marker=markers[i], c=colors[i])
+            i += 1
+        axs[axs_count // col, axs_count % col].set_title(f"{image_set_name}_img{axs_count + 1}")
+        axs[axs_count // col, axs_count % col].set_xlabel('Frequency of keypoints')
+        axs[axs_count // col, axs_count % col].set_ylabel('Fraction of keypoints')
+        #         plt.plot(frequencies, data, label=detector)
+
+        axs_count += 1
