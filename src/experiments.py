@@ -2,7 +2,7 @@ from src import data as dt
 from src import util
 from src import detector_descriptor as dd
 import matplotlib.pyplot as plt
-import src.imgop as ip
+import src.keypoint_processing as ip
 import pandas as pd
 import numpy as np
 

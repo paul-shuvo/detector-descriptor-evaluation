@@ -7,7 +7,7 @@ import seaborn as sns
 from src import detector_descriptor as dd
 from src import data as dt
 from src import util
-from src import imgop as ip
+from src import keypoint_processing as ip
 from src import experiments as ex
 import yaml
 import cv2

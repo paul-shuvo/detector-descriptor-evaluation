@@ -7,12 +7,20 @@ import cv2
 
 def get_unique_kpnp(kp_all):
     """
-    Get all unique numpy keypoints from a dictionary containing groups of keypoints.
+    Returns all unique numpy keypoints from a dictionary containing groups of cv keypoints.
     Args:
-        all_kpnp(`dict`):  A dictionary containing groups of Opencv keypoint object.
+        kp_all(`dict`):  A dictionary containing groups of Opencv keypoint object.
 
     Returns:
-        All unique numpy keypoints from a dictionary containing groups of keypoints.
+        (`ndarray`): All unique numpy keypoints extracted from a dictionary containing groups of keypoints.
+
+    Examples:
+        .. code-block:: python
+
+
+    See Also:
+        :func:`~src.keypoint_processing`
+
     """
     kpnp_all = cvkp2np_all(kp_all)
     kpnp_unique = np.array(list(chain(*[value.tolist() for value in kpnp_all.values()])))
@@ -22,19 +30,21 @@ def get_unique_kpnp(kp_all):
 
 def get_kpnp_frequency(kpnp_all, kpnp_unique):
     """
-    Compute frrequncy for all unique kpnp
+    Returns frequency for all numpy type keypoints.
     Args:
-        kpnp_all:
-        kpnp_unique:
+        kpnp_all(`dict`): Contains grouped numpy keypoints. These groups are formed either by detectors, or images.
+        kpnp_unique(`ndarray`): A set of all the unique keypoints found in `kpnp_all`.
 
     Returns:
-
+        (`ndarray`): Returns frequency for all numpy type keypoints. Shape is `(nx3) -> (keypoint_x, keypoint_y, frequency)`.
     """
+    # pt_freq contains frequency value for each keypoint
     pt_freq = np.zeros((kpnp_unique.shape[0], 1))
     for i in range(0, kpnp_unique.shape[0]):
         for key in kpnp_all.keys():
             if kpnp_unique[i] in kpnp_all[key]:
                 pt_freq[i] += 1
+    # pt_freq is added as a column to the numpy keypoint array.
     kpnp_unique_freq = np.hstack((kpnp_unique, pt_freq))
     return kpnp_unique_freq
 
@@ -46,9 +56,22 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
 #     kpnp_by_frequency = kpnp_unique[index_matched]
 #     return kpnp_by_frequency
 
-def get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency):
-    kpnp_freq = get_kpnp_frequency(kpnp_det, kpnp_unique)
+def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
+    """
+    Get all the numpy keypoints based on it frequency value.
+    Args:
+        kpnp_all(`dict`): Contains grouped numpy keypoints. These groups are formed either by detectors, or images.
+        kpnp_unique(`ndarray`): A set of all the unique keypoints found in `kpnp_all`.
+        frequency(`int`): The query frequency value.
+
+    Returns:
+
+    """
+    # get frequency for all numpy type keypoints
+    kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
+    # find index of numpy keypoints where frequency is matched.
     index_matched = np.where(kpnp_freq[:,2] == frequency)
+    # retrieve numpy keypoints by indices found in previous step.
     kpnp_filtered_by_frequency = kpnp_unique[index_matched]
     return kpnp_filtered_by_frequency
 
