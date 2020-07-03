@@ -36,7 +36,7 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
         kpnp_unique(`ndarray`): A set of all the unique keypoints found in `kpnp_all`.
 
     Returns:
-        (`ndarray`): Returns frequency for all numpy type keypoints. Shape is `(nx3) -> (keypoint_x, keypoint_y, frequency)`.
+        (`ndarray`): Contains keypoint locations and corresponding frequency for all numpy type keypoints. Shape is `(nx3) -> (keypoint_x, keypoint_y, frequency)`.
     """
     # pt_freq contains frequency value for each keypoint
     pt_freq = np.zeros((kpnp_unique.shape[0], 1))
@@ -65,7 +65,7 @@ def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
         frequency(`int`): The query frequency value.
 
     Returns:
-
+        (`ndarray`): Contains keypoints for that corresponds to a certain frequency.
     """
     # get frequency for all numpy type keypoints
     kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
@@ -101,7 +101,7 @@ def cvkp2np(keypoints, round_=True):
         The locations of the keypoints are rounded.
 
     Args:
-        keypoints(`obj`): OpenCV keypoint object
+        keypoints(`obj`): OpenCV keypoint object.
 
     Returns:
         (`ndarray`): An ndarray of `dtype=int` conatining the `x, y` locations of the
@@ -120,10 +120,9 @@ def cvkp2np(keypoints, round_=True):
 
 def cvkp2np_all(keypoints_all):
     """
-
+    Converts a list of opencv keypoint object to `ndarray` and returns it.
     Args:
-        keypoints_all(`dict`): A `dict` containing OpenCV keypoint objects for different
-        groups(can be different detector or image).
+        keypoints_all(`dict`): Contains grouped numpy keypoints. These groups are formed either by detectors, or images.
 
     Returns:
         (`dict`): A `dict` containing converted OpenCV keypoints to `ndarray`s
@@ -131,18 +130,26 @@ def cvkp2np_all(keypoints_all):
     """
     kp_np = dict()
     for key, keypoints in keypoints_all.items():
-        # keypoints_to_list = list()
-        # for keypoint in keypoints:
-        #     pt = (round(keypoint.pt[0]), round(keypoint.pt[1]))
-        #     keypoints_to_list.append(pt)
+        # key can be either detector name or image name
         kp_np[key] = cvkp2np(keypoints)
 
     return kp_np
 
 def get_kp(image, detector_name):
+    """
+    Extracts keypoints from an image using a specified detector.
+    Args:
+        image(`ndarray`): The query image.
+        detector_name(`str`): The name of the detector that'll be used to extract keypoints.
+
+    Returns:
+        (`obj`): Opencv keypoint objects.
+    """
     if detector_name is 'GFTT':
+        # maxCorners is set high enough, so that all the keypoints can be retrieved.
         detector = dd.initialize_detector(detector_name, additional_args='maxCorners=15000')
     elif detector_name is 'ORB':
+        # nfeatures is set high enough, so that all the keypoints can be retrieved.
         detector = dd.initialize_detector(detector_name, additional_args='nfeatures=100000')
     else:
         detector = dd.initialize_detector(detector_name)
@@ -152,13 +159,13 @@ def get_kp(image, detector_name):
 
 def get_det_kp_et(image_set, detector_name):
     """
-    Returns keypoints for all images in image set
+    Extract keypoints and compute execution time for all images in image set for a specified feature detector.
     Args:
-        image_set:
-        detector_name:
+        image_set(`dict`): Contains all the images for an image sequence.
+        detector_name(`str`): The name of the detector.
 
     Returns:
-
+        (`list`): Execution time, extracted keypoints for all the images
     """
 
     keypoints_by_image = dict()
