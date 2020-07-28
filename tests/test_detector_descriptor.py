@@ -17,13 +17,13 @@ def not_raises(exception):
   except exception:
     raise pytest.fail("DID RAISE {0}".format(exception))
 
+
 def test_get_all_detectors():
     detectors = get_all_detectors()
     img = cv2.imread('lena.jpg')
     with not_raises(Exception):
         for key, value in detectors.items():
             key_point = value.create().detect(img)
-
 
 
 def test_get_all_desriptors():

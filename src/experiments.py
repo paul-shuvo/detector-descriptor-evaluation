@@ -2,14 +2,14 @@ from src import data as dt
 from src import util
 from src import detector_descriptor as dd
 import matplotlib.pyplot as plt
-import src.keypoint_processing as ip
+import src.keypoint_processing as kpp
 import pandas as pd
 import numpy as np
 
 
 def exp_det_kpet_plt(image, ax):
     # fig, ax = plt.subplots(1,2)
-    execution_time, keypoints_by_detector = ip.get_alldet_kp_et(image)
+    execution_time, keypoints_by_detector = kpp.get_alldet_kp_et(image)
     # fig = plt.figure()
     # ax = fig.add_subplot(111)
     plot_data = {}
@@ -33,7 +33,7 @@ def exp_det_kpet_plt(image, ax):
     # return ax
 
 def experiment_1_df(image):
-    execution_time, keypoints_by_detector = ip.get_alldet_kp_et(image)
+    execution_time, keypoints_by_detector = kpp.get_alldet_kp_et(image)
     plot_data = {}
     for name in execution_time.keys():
         total_keypoints = len(keypoints_by_detector[name])
@@ -57,7 +57,7 @@ def exp_desc_et_plt(image_set, detector_name, ax):
     image_num = 0
     # print(detector_name)
     for image_name, image in image_set.items():
-        des_et_kp[image_num] = ip.get_alldes_desc_et(image, detector_name)
+        des_et_kp[image_num] = kpp.get_alldes_desc_et(image, detector_name)
         image_num += 1
 
     kp_size_arr = []
@@ -101,13 +101,13 @@ def exp_desc_et_plt(image_set, detector_name, ax):
 
 
 def exp_kp_freq_frac_plt(image_set_name, pckl_path, frequencies, axs, row, col):
-    kpnp_det_arr = ip.get_kpnp_det_arr(image_set_name, pckl_path)
+    kpnp_det_arr = kpp.get_kpnp_det_arr(image_set_name, pckl_path)
     #     plot_data_arr = get_plot_data_arr(kp_np_det_arr, frequencies)
     plot_data_arr = []
     for kpnp_det in kpnp_det_arr:
         matched_kpnp_ratio_det_freq = dict()
         for frequency in frequencies:
-            matched_kpnp_ratio_det_freq[frequency] = ip.get_matched_kpnp_ratio_det(kpnp_det, frequency)
+            matched_kpnp_ratio_det_freq[frequency] = kpp.get_matched_kpnp_ratio_det(kpnp_det, frequency)
 
         plot_data = dict()
         for detector in dd.all_detectors:

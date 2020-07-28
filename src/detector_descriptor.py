@@ -659,13 +659,12 @@ def set_only_binary_descriptor(set_val):
 
 
 all_detectors = list(get_all_detectors().keys())
+all_descriptors = list(get_all_descriptors().keys())
+
 if only_binary_descriptor:
-    all_descriptors = list(get_all_descriptors().keys())
     non_binary_descriptors = ['DAISY', 'KAZE']
     for descriptor in non_binary_descriptors:
         all_descriptors.remove(descriptor)
-else:
-    all_descriptors = list(get_all_descriptors().keys())
 # Todo: Check better testing techniques
 # Todo: change eval to ast.literal_eval
 # TODO: test set_only_binary_descriptor

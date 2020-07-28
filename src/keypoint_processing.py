@@ -36,7 +36,8 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
         kpnp_unique(`ndarray`): A set of all the unique keypoints found in `kpnp_all`.
 
     Returns:
-        (`ndarray`): Contains keypoint locations and corresponding frequency for all numpy type keypoints. Shape is `(nx3) -> (keypoint_x, keypoint_y, frequency)`.
+        (`ndarray`): Contains keypoint locations and corresponding frequency for all numpy type keypoints.
+        Shape is `(nx3) -> (keypoint_x, keypoint_y, frequency)`.
     """
     # pt_freq contains frequency value for each keypoint
     pt_freq = np.zeros((kpnp_unique.shape[0], 1))
@@ -68,12 +69,17 @@ def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
         (`ndarray`): Contains keypoints for that corresponds to a certain frequency.
     """
     # get frequency for all numpy type keypoints
-    kpnp_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
+    if isinstance(kpnp_all, dict):
+        kpnp_all_freq = get_kpnp_frequency(kpnp_all, kpnp_unique)
+    else:
+        kpnp_all_freq = kpnp_all
     # find index of numpy keypoints where frequency is matched.
-    index_matched = np.where(kpnp_freq[:,2] == frequency)
+    # print(type(kpnp_all_freq))
+    index_matched = np.where(kpnp_all_freq[:,2] == frequency)
     # retrieve numpy keypoints by indices found in previous step.
     kpnp_filtered_by_frequency = kpnp_unique[index_matched]
     return kpnp_filtered_by_frequency
+
 
 def get_kpnp_frequency_det_sigma(image, detector_name, sigma_values):
     kp_all = {}
@@ -106,6 +112,19 @@ def cvkp2np(keypoints, round_=True):
     Returns:
         (`ndarray`): An ndarray of `dtype=int` conatining the `x, y` locations of the
         keypoints.
+
+        Examples:
+        .. code-block:: python
+
+            In[1]: from src.keypoint_processing import *
+            In[2]: import cv2
+            In[3]: image = cv2.imread('.\\tests\\lena.jpg')
+            In[4]: kp = get_kp(image, 'AGAST')
+            In[5]: type(kp[0])
+            Out[5]: cv2.KeyPoint
+            In[6]: kpnp = cvkp2np(kp)
+            In[7]: type(kpnp)
+            Out[7]: numpy.ndarray
 
     """
     keypoints_to_list = list()
@@ -142,6 +161,15 @@ def get_kp(image, detector_name):
         image(`ndarray`): The query image.
         detector_name(`str`): The name of the detector that'll be used to extract keypoints.
 
+    Examples:
+        .. code-block:: python
+
+            In[1]: from src.keypoint_processing import *
+            In[2]: import cv2
+            In[3]: image = cv2.imread('.\\tests\\lena.jpg')
+            In[4]: kp = get_kp(image, 'AGAST')
+            In[5]: type(kp[0])
+            Out[5]: cv2.KeyPoint
     Returns:
         (`obj`): Opencv keypoint objects.
     """
@@ -179,7 +207,18 @@ def get_det_kp_et(image_set, detector_name):
         i += 1
     return execution_time, keypoints_by_image
 
+
 def get_desc_by_det(image, detector_name, descriptor_name):
+    """
+    
+    Args:
+        image:
+        detector_name:
+        descriptor_name:
+
+    Returns:
+
+    """
     descriptor = dd.initialize_descriptor(descriptor_name)
     kp = get_kp(image, detector_name)
     desc = descriptor.compute(image, kp)
@@ -243,24 +282,6 @@ def get_det_avg_numkp_et(image_set):
 
     return avg_execution_time, avg_keypoints_by_detector
 
-
-# from itertools import chain
-
-
-# def get_kp_frequency(kp_np_det, kp_np_unique):
-#     point_freq = np.zeros((kp_np_unique.shape[0], 1))
-#     for i in range(0, kp_np_unique.shape[0]):
-#         for detector in dd.get_all_detectors().keys():
-#             if kp_np_unique[i] in kp_np_det[detector]:
-#                 point_freq[i] += 1
-#     kp_np_unique_freq = np.hstack((kp_np_unique, point_freq))
-#     return kp_np_unique_freq
-#
-# def get_kpnp_filtered_frequency(kp_np_det, kp_np_unique, frequency):
-#     kp_freq = get_kp_frequency(kp_np_det, kp_np_unique)
-#     index_matched = np.where(kp_freq[:,2] == frequency)
-#     kp_filtered_frequency = kp_np_unique[index_matched]
-#     return kp_filtered_frequency
 
 def get_matched_kp_ratio_det(kpnp_det, frequency):
     kpnp_unique= np.unique(np.array(list(chain(*[value.tolist() for value in kpnp_det.values()]))), axis=0,)
