@@ -43,7 +43,9 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
     pt_freq = np.zeros((kpnp_unique.shape[0], 1))
     for i in range(0, kpnp_unique.shape[0]):
         for key in kpnp_all.keys():
-            if kpnp_unique[i] in kpnp_all[key]:
+            if kpnp_all[key].shape[0] is 0:
+                break
+            if (kpnp_all[key]==kpnp_unique[i]).all(1).any():
                 pt_freq[i] += 1
     # pt_freq is added as a column to the numpy keypoint array.
     kpnp_unique_freq = np.hstack((kpnp_unique, pt_freq))

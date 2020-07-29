@@ -47,7 +47,7 @@ label_path = os.path.join(pckl_path, pckl_name)
 labels = dt.load_data(label_path)
 # dataset_pckl_name = cfg['dataset']['dataset_type']['oxford']['pckl_name']
 data_path = os.path.join(pckl_path, ''.join([dataset, '.pckl']))
-image_set_name = 'graf'
+image_set_name = 'bikes'
 image_set = util.get_image_set(data_path, image_set_name)
 # image = image_set['bikes_img6']
 # ex.experiment_1_df(image)
