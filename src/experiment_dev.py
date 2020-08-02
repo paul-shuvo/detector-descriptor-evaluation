@@ -47,8 +47,7 @@ label_path = os.path.join(pckl_path, pckl_name)
 labels = dt.load_data(label_path)
 # dataset_pckl_name = cfg['dataset']['dataset_type']['oxford']['pckl_name']
 data_path = os.path.join(pckl_path, ''.join([dataset, '.pckl']))
-image_set_name = 'bikes'
-image_set = util.get_image_set(data_path, image_set_name)
+
 # image = image_set['bikes_img6']
 # ex.experiment_1_df(image)
 
@@ -131,7 +130,7 @@ image_set = util.get_image_set(data_path, image_set_name)
 #     return res_image, inlier_ratio
 
 
-def get_alldet_inlier_ratio(
+def get_alldet_matching_results(
         image_tuple,
         label_homography,
         descriptor_name,
@@ -145,13 +144,13 @@ def get_alldet_inlier_ratio(
     for detector_name in dd.all_detectors:
         if detector_name in excluded_det:
             continue
-        alldet_inlier_ratio[detector_name] = get_inlier_ratio(image_tuple, label_homography, detector_name,
+        alldet_inlier_ratio[detector_name] = get_matching_results(image_tuple, label_homography, detector_name,
                                                               descriptor_name, matcher_type, nn_match_ratio,
                                                               inlier_threshold)
     return alldet_inlier_ratio
 
 
-def get_alldes_inlier_ratio(
+def get_alldes_matching_results(
         image_tuple,
         label_homography,
         detector_name,
@@ -167,18 +166,12 @@ def get_alldes_inlier_ratio(
     for descriptor_name in dd.get_all_descriptors():
         if descriptor_name in excluded_des:
             continue
-        alldes_inlier_ratio[descriptor_name] = get_inlier_ratio(image_tuple, label_homography, detector_name,
+        alldes_inlier_ratio[descriptor_name] = get_matching_results(image_tuple, label_homography, detector_name,
                                                                 descriptor_name, matcher_type, nn_match_ratio,
                                                                 inlier_threshold)
     return alldes_inlier_ratio
 
-image_nums = (1, 2)
-image1 = image_set[f'{image_set_name}_img{image_nums[0]}']
-image2 = image_set[f'{image_set_name}_img{image_nums[1]}']
-label_name = f'{image_set_name}_img{image_nums[1]}'
-label_homography = labels[label_name]
-detector_name = 'ORB'
-descriptor_name = 'BRISK'
+
 
 # for descriptor_name in dd.all_descriptors:
 #     if descriptor_name in ['DAISY', 'KAZE']:
@@ -211,7 +204,7 @@ descriptor_name = 'BRISK'
 # s = 1
 
 
-def get_inlier_ratio(
+def get_matching_results(
         image_tuple,
         label_homography,
         detector_name,
@@ -219,6 +212,7 @@ def get_inlier_ratio(
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
         nn_match_ratio=0.8,
         inlier_threshold=2.5):
+    # print(detector_name +'-'+ descriptor_name)
 
     kp1, desc1 = kpp.get_desc_by_det(image_tuple[0], detector_name, descriptor_name)
     kp2, desc2 = kpp.get_desc_by_det(image_tuple[1], detector_name, descriptor_name)
@@ -288,11 +282,51 @@ def get_inlier_ratio(
     # print('# Matches:                            \t', len(matched1))
     # print('# Inliers:                            \t', len(inliers1))
     # print('# Inliers Ratio:                      \t', inlier_ratio)
-    print(f'Descriptor: {descriptor_name}, TP: {len(true_positive)}, FP: {len(false_positive)}, TN: {len(true_negative)}, FN: {len(false_negative)}, Total: {len(kp1)}')
-    return res_image, inlier_ratio
+    accuracy = (len(true_positive) + len(true_negative))/(len(true_positive) + len(true_negative) + len(false_positive) + len(false_negative))
+    precision = len(true_positive) / (len(true_positive) + len(false_positive))
+    recall =  len(true_positive) / (len(true_positive) + len(true_negative))
+    # print(f'Descriptor: {descriptor_name}, TP: {len(true_positive)}, FP: {len(false_positive)}, TN: {len(true_negative)}, FN: {len(false_negative)}, Total: {len(kp1)}')
+    return {'Resultant image': res_image,
+            'Inlier ratio': inlier_ratio,
+            'TP': true_positive,
+            'FN': false_negative,
+            'TN': true_negative,
+            'FP': false_positive,
+            'Accuracy': accuracy,
+            'Precision': precision,
+            'Recall': recall}
 
 
+image_set_name = 'bikes'
+image_set = util.get_image_set(data_path, image_set_name)
+image_nums = (1, 2)
+excluded_des=['KAZE', 'DAISY']
+comb_result_avg = dict()
+for detector_name in dd.all_detectors:
+    for descriptor_name in dd.all_descriptors:
+        if descriptor_name in excluded_des:
+            continue
+        if descriptor_name is 'AKAZE' and detector_name is not ('AKAZE' or 'KAZE'):
+            comb_result_avg[f'{detector_name}-{detector_name}'] = None
+            continue
+        avg_accuracy = 0
+        avg_precision = 0
+        avg_recall = 0
+        avg_inlier_ratio = 0
+        for image_num in range(2, 7):
+            image1 = image_set[f'{image_set_name}_img{1}']
+            image2 = image_set[f'{image_set_name}_img{image_num}']
+            label_name = f'{image_set_name}_img{image_num}'
+            label_homography = labels[label_name]
+            matching_results = get_matching_results((image1, image2), label_homography, detector_name, descriptor_name)
 
-
+            avg_accuracy += matching_results['Accuracy']
+            avg_precision += matching_results['Precision']
+            avg_recall += matching_results['Recall']
+            avg_inlier_ratio += matching_results['Inlier ratio']
+        comb_result_avg[f'{detector_name}-{descriptor_name}'] = {'Accuracy': avg_accuracy/5,
+                                                               'Precision': avg_precision/5,
+                                                               'Recall': avg_recall/5,
+                                                               'Inlier ratio': avg_inlier_ratio/5}
 # s, t = get_inlier_ratio((image1, image2),label_homography,detector_name,descriptor_name,matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,nn_match_ratio=0.8,inlier_threshold=2.5)
-alldes_inlier_ratio = get_alldes_inlier_ratio((image1, image2), label_homography, detector_name, excluded_des=['KAZE', 'DAISY'])
+dd.print_dictionary(comb_result_avg)

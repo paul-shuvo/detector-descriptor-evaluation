@@ -7,6 +7,59 @@ import pandas as pd
 import numpy as np
 
 
+def exp_repeatability_plt(image_set_name,
+                          color_map,
+                          data_path,
+                          labels,
+                          ax):
+    plot_dict = dict()
+    image_set = util.get_image_set(data_path, image_set_name)
+    for detector in dd.all_detectors:
+        # print(detector)
+        plot_dict[detector] = kpp.get_repeatability_by_det(detector, image_set_name, image_set, labels)
+
+    bar_width = 0.1
+    bars = dict()
+
+    for detector, val_dict in plot_dict.items():
+        bar = list()
+        for image_num, val in val_dict.items():
+            bar.append(val['ratio'])
+        bars[detector] = bar
+
+    # Set position of bar on X axis
+    pos = dict()
+    r = list(range(len(list(bars.values())[0])))
+    # pos.append(r)
+    for i, detector in enumerate(bars):
+        if i is 0:
+            pos[detector] = r
+        else:
+            r = [x + bar_width for x in r]
+            pos[detector] = r
+
+    # Make the plot
+    ax.grid(linewidth=1.5)
+    ax.xaxis.grid(False)
+    for i, detector in enumerate(bars):
+        ax.bar(pos[detector], bars[detector], color=color_map[i], alpha=1, width=bar_width,
+               edgecolor='white', label=detector)
+
+    xticks_pos = list()
+    xticks_labels = list()
+    for i in range(len(list(pos.values())[0])):
+        xticks_labels.extend([detector for detector in pos.keys()])
+        for detector_name, pos_val in pos.items():
+            xticks_pos.append(pos_val[i])
+
+    ax.set_xticks(xticks_pos)
+    ax.set_xticklabels(xticks_labels)
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor", fontsize=9)
+
+
 def exp_det_kpet_plt(image, ax):
     # fig, ax = plt.subplots(1,2)
     execution_time, keypoints_by_detector = kpp.get_alldet_kp_et(image)
@@ -31,6 +84,7 @@ def exp_det_kpet_plt(image, ax):
     ax.set_ylabel("Number of Keypoints")
     # plt.show()
     # return ax
+
 
 def experiment_1_df(image):
     execution_time, keypoints_by_detector = kpp.get_alldet_kp_et(image)

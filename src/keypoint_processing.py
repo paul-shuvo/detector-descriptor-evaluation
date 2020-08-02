@@ -5,6 +5,109 @@ from src import util
 from itertools import chain
 import cv2
 
+
+def get_frequency_ratio(data_path, detector_name, image_set_name, labels):
+    '''
+    Returns the ratio (#keypoints/#total keypoints) for each frequency value.
+    Args:
+        data_path(`str`): Path of the data.
+        detector_name(`str`): Name of the detector.
+        image_set_name(`str`): Name of the image sequence that would be analyzed
+        labels(`dict`): Contains homography matrix for each image pair.
+
+    Returns:
+        (`tuple`): A tuple of dictionaries containing frequency values and frequency ratios.
+    '''
+    image_set = util.get_image_set(data_path, image_set_name)
+    image1 = image_set[f'{image_set_name}_img{1}']
+    kp = get_kp(image1, detector_name)
+    common_pts = list()
+    for kp_ in kp:
+        is_common = True
+        for image_name in list(image_set.keys())[1:]:
+            col = np.ones((3, 1), dtype=np.float64)
+            col[0:2, 0] = kp_.pt
+            label_homography = labels[image_name]
+            col = np.dot(label_homography, col)
+            col /= col[2, 0]
+            col = np.rint(col)[0:2].astype(int).reshape((1, 2))[0]
+            if 0 <= col[0] <= image_set[image_name].shape[0] and 0 <= col[1] <= image_set[image_name].shape[1]:
+                pass
+            else:
+                is_common = False
+                break
+        if is_common:
+            common_pts.append(kp_.pt)
+
+    kp_all_train_image = dict()
+    for image_name in list(image_set.keys())[1:]:
+        image = image_set[image_name]
+        kp_all_train_image[image_name] = cvkp2np(get_kp(image, detector_name))
+
+    pt_freq = np.zeros((len(common_pts), 1))
+    for i, common_pt in enumerate(common_pts):
+        for image_name in list(image_set.keys())[1:]:
+            label_homography = labels[image_name]
+            col = np.ones((3, 1), dtype=np.float64)
+            col[0:2, 0] = common_pt
+            col = np.dot(label_homography, col)
+            col /= col[2, 0]
+            col = np.rint(col)[0:2].astype(int).reshape((1, 2))[0]
+            # common_pt = np.rint(common_pt).astype(int)
+            if (kp_all_train_image[image_name] == col).all(1).any():
+                pt_freq[i] += 1
+    common_pts_np = np.hstack((np.array(common_pts), pt_freq))
+    unique, counts = np.unique(common_pts_np[:, 2], return_counts=True)
+    frequency_ratio = dict(zip(unique, np.round(counts / np.sum(counts), 2)))
+    frequency = dict(zip(unique, counts))
+    return frequency_ratio, frequency
+
+
+def get_repeatability_by_det(detector_name, image_set_name, image_set, labels):
+    '''
+    Returns the repeatability information for each image in a
+    specific image set for a certain detector.
+    Args:
+        detector_name(`str`): Name of the detector.
+        image_set_name(`str`): Name of the image set.
+        image_set(`dict`): A dictionary containing image name as key and the image as an ndarray.
+        labels(`ndarray`): Contains homography mapping from the first image to all other images.
+
+    Returns:
+        (`dict`): Returns number of keypoints that are not repeated, repeated, and the ratio of repeated keypoints.
+
+    '''
+    image1 = image_set[f'{image_set_name}_img{1}']
+    kp = get_kp(image1, detector_name)
+    repeatability = dict()
+    for image_num in range(2, 7):
+        repeated = 0
+        not_repeated = 0
+        image2 = image_set[f'{image_set_name}_img{image_num}']
+        kp2 = get_kp(image2, detector_name)
+        # kpl2 = [kp_.pt for kp_ in kp2]
+        kpnp2 = cvkp2np(kp2)
+
+        label_name = f'{image_set_name}_img{image_num}'
+        label_homography = labels[label_name]
+
+        for kp_ in kp:
+            col = np.ones((3, 1), dtype=np.float64)
+            col[0:2, 0] = kp_.pt
+            col = np.dot(label_homography, col)
+            col /= col[2, 0]
+            col = np.rint(col)[0:2].astype(int).reshape((1, 2))[0]
+
+            if 0 <= col[0] <= image2.shape[0] and 0 <= col[1] <= image2.shape[1]:
+                # any((a[:] == [1, 2]).all(1))
+                if (kpnp2 == col).all(1).any():
+                    repeated += 1
+                else:
+                    not_repeated += 1
+        repeatability[image_num] = {'repeated': repeated, 'not-repeated': not_repeated, 'ratio': (repeated/(repeated + not_repeated))}
+    return repeatability
+
+
 def get_unique_kpnp(kp_all):
     """
     Returns all unique numpy keypoints from a dictionary containing groups of cv keypoints.
