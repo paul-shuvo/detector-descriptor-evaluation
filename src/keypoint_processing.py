@@ -6,6 +6,149 @@ from itertools import chain
 import cv2
 
 
+def get_alldet_matching_results(
+        image_tuple,
+        label_homography,
+        descriptor_name,
+        excluded_det=None,
+        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
+        nn_match_ratio=0.8,
+        inlier_threshold=2.5):
+    if excluded_det is None:
+        excluded_det = []
+    alldet_inlier_ratio = dict()
+    for detector_name in dd.all_detectors:
+        if detector_name in excluded_det:
+            continue
+        alldet_inlier_ratio[detector_name] = get_matching_results(image_tuple, label_homography, detector_name,
+                                                                  descriptor_name, matcher_type, nn_match_ratio,
+                                                                  inlier_threshold)
+    return alldet_inlier_ratio
+
+
+def get_alldes_matching_results(
+        image_tuple,
+        label_homography,
+        detector_name,
+        excluded_des=None,
+        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
+        nn_match_ratio=0.8,
+        inlier_threshold=2.5):
+    if excluded_des is None:
+        excluded_des = []
+    if detector_name is not 'AKAZE':
+        excluded_des.append('AKAZE')
+    alldes_inlier_ratio = dict()
+    for descriptor_name in dd.get_all_descriptors():
+        if descriptor_name in excluded_des:
+            continue
+        alldes_inlier_ratio[descriptor_name] = get_matching_results(image_tuple, label_homography, detector_name,
+                                                                    descriptor_name, matcher_type, nn_match_ratio,
+                                                                    inlier_threshold)
+    return alldes_inlier_ratio
+
+
+def get_matching_results(
+        image_tuple,
+        label_homography,
+        detector_name,
+        descriptor_name,
+        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
+        nn_match_ratio=0.8,
+        inlier_threshold=2.5):
+    # print(detector_name +'-'+ descriptor_name)
+
+    kp1, desc1 = get_desc_by_det(image_tuple[0], detector_name, descriptor_name)
+    kp2, desc2 = get_desc_by_det(image_tuple[1], detector_name, descriptor_name)
+
+    matcher = cv2.DescriptorMatcher_create(matcher_type)
+    nn_matches = matcher.knnMatch(desc1, desc2, 2)
+
+    matched1 = []
+    matched2 = []
+    unmatched = []
+    # nn_match_ratio = 0.8  # Nearest neighbor matching ratio
+    for m, n in nn_matches:
+        if m.distance < nn_match_ratio * n.distance:
+            matched1.append(kp1[m.queryIdx])
+            matched2.append(kp2[m.trainIdx])
+    for kp in kp1:
+        if kp not in matched1:
+            unmatched.append(kp)
+
+    true_positive = []
+    true_negative = []
+    false_positive = []
+    false_negative = []
+    inliers1 = []
+    inliers2 = []
+    good_matches = []
+    # inlier_threshold = 2.5  # Distance threshold to identify inliers with homography check
+
+    for i, m in enumerate(unmatched):
+        col = np.ones((3, 1), dtype=np.float64)
+        col[0:2, 0] = m.pt
+        col = np.dot(label_homography, col)
+        col /= col[2, 0]
+        if 0 <= col[0] <= image_tuple[1].shape[0] and 0 <= col[1] <= image_tuple[1].shape[1]:
+            false_negative.append(m)
+        else:
+            false_positive.append(m)
+
+    for i, m in enumerate(matched1):
+        col = np.ones((3, 1), dtype=np.float64)
+        col[0:2, 0] = m.pt
+        col = np.dot(label_homography, col)
+        col /= col[2, 0]
+        # dist = sqrt(pow(col[0, 0] - matched2[i].pt[0], 2) + \
+        #             pow(col[1, 0] - matched2[i].pt[1], 2))
+        dist = np.sqrt(np.power(col[0, 0] - matched2[i].pt[0], 2) + \
+                       np.power(col[1, 0] - matched2[i].pt[1], 2))
+
+        if dist < inlier_threshold:
+            good_matches.append(cv2.DMatch(len(inliers1), len(inliers2), 0))
+            inliers1.append(matched1[i])
+            inliers2.append(matched2[i])
+            true_positive.append(m)
+        else:
+            true_negative.append(m)
+
+    res_image = cv2.drawMatches(image_tuple[0], inliers1, image_tuple[1], inliers2, good_matches, None, flags=2)
+
+    try:
+        inlier_ratio = len(inliers1) / float(len(matched1))
+    except ZeroDivisionError:
+        inlier_ratio = 0
+
+    try:
+        accuracy = (len(true_positive) + len(true_negative)) / (len(true_positive) + len(true_negative) + len(false_positive) + len(false_negative))
+    except ZeroDivisionError:
+        accuracy = 0
+
+    try:
+        precision = len(true_positive) / (len(true_positive) + len(false_positive))
+    except ZeroDivisionError:
+        precision = 0
+
+    try:
+        recall = len(true_positive) / (len(true_positive) + len(true_negative))
+    except ZeroDivisionError:
+        recall = 0
+
+    # print(f'Descriptor: {descriptor_name}, TP: {len(true_positive)}, FP: {len(false_positive)}, TN: {len(true_negative)}, FN: {len(false_negative)}, Total: {len(kp1)}')
+    return {
+        'Resultant image': res_image,
+        'Inlier ratio': inlier_ratio,
+        'TP': true_positive,
+        'FN': false_negative,
+        'TN': true_negative,
+        'FP': false_positive,
+        'Accuracy': accuracy,
+        'Precision': precision,
+        'Recall': recall
+    }
+
+
 def get_frequency_ratio(data_path, detector_name, image_set_name, labels):
     '''
     Returns the ratio (#keypoints/#total keypoints) for each frequency value.
