@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from src import data as dt
-import os
 
 
 def highlight_max(data, color='#5fba7d'):

@@ -6,22 +6,17 @@ from itertools import chain
 import cv2
 
 
-def get_alldet_matching_results(
-        image_tuple,
-        label_homography,
-        descriptor_name,
-        excluded_det=None,
-        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
-        nn_match_ratio=0.7,
-        inlier_threshold=2.5):
+def get_alldet_matching_results(image_tuple, label_homography, descriptor_name, excluded_det=None, matcher_type=cv2.DescriptorMatcher_BRUTEFORCE, nn_match_ratio=0.7, inlier_threshold=2.5):
     """
     Finds the matching result for all the detector-descriptor matching result for a given descriptor.
+
     Args:
         image_tuple(`tuple`): Image pair which are used to find the keypoint matches.
         label_homography(`ndarray`): The homography matrix for the given image pair.
         descriptor_name(`str`): The name of the descriptor.
         excluded_det(`list`): A list of detectors excluded from the original detector list.
         matcher_type(`cv2`): The matcher algorithm.
+
         .. Note:
             The default matcher type is `cv2.DescriptorMatcher_BRUTEFORCE`; while using other matcher type make sure to
             check the supported distance measuring technique.
@@ -44,16 +39,10 @@ def get_alldet_matching_results(
     return alldet_inlier_ratio
 
 
-def get_alldes_matching_results(
-        image_tuple,
-        label_homography,
-        detector_name,
-        excluded_des=None,
-        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
-        nn_match_ratio=0.7,
-        inlier_threshold=2.5):
+def get_alldes_matching_results(image_tuple, label_homography, detector_name, excluded_des=None, matcher_type=cv2.DescriptorMatcher_BRUTEFORCE, nn_match_ratio=0.7, inlier_threshold=2.5):
     """
     Finds the matching result for all the detector-descriptor matching result for a given detector.
+
     Args:
         image_tuple(`tuple`): Image pair which are used to find the keypoint matches.
         label_homography(`ndarray`): The homography matrix for the given image pair.
@@ -84,16 +73,10 @@ def get_alldes_matching_results(
     return alldes_inlier_ratio
 
 
-def get_matching_results(
-        image_tuple,
-        label_homography,
-        detector_name,
-        descriptor_name,
-        matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
-        nn_match_ratio=0.7,
-        inlier_threshold=2.5):
+def get_matching_results(image_tuple, label_homography, detector_name, descriptor_name, matcher_type=cv2.DescriptorMatcher_BRUTEFORCE, nn_match_ratio=0.7, inlier_threshold=2.5):
     """
     Finds the matching result for all the detector-descriptor matching result for a given descriptor.
+
     Args:
         image_tuple(`tuple`): Image pair which are used to find the keypoint matches.
         label_homography(`ndarray`): The homography matrix for the given image pair.
