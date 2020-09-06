@@ -14,6 +14,7 @@ from timeit import default_timer
 def get_paths(dataset_path, extension):
     """
     Returns a list of file paths ending in specified file extension(s) (`extension`)
+
     Args:
         dataset_path(`str`): Path to the dataset/folder.
         extension(`str` or `str tuple`): File extension or a tuple of file extensions.

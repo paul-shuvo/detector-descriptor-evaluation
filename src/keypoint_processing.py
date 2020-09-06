@@ -606,6 +606,15 @@ def get_alldes_desc_et(image, detector_name):
 
 
 def get_det_avg_numkp_et(image_set):
+    """
+    Get the average number of keypoints detected and average execution time for all available detectors for a given
+    image set.
+    Args:
+        image_set(`list`): Set of images as `ndarray`.
+
+    Returns:
+        (`dict`, `dict`): Average execution time and average number of keypoints for each detector.
+    """
     avg_keypoints_by_detector = dict()
     avg_execution_time = dict()
     all_detectors = dd.get_all_detectors()
@@ -626,6 +635,15 @@ def get_det_avg_numkp_et(image_set):
 
 
 def get_matched_kp_ratio_det(kpnp_det, frequency):
+    """
+    Get matched keypoint(numpy) ratio for all availabel detectors.
+    Args:
+        kpnp_det(`dict`): Extracted keypoints for all the available detectors.
+        frequency(`ndarray`): Corresponding frequency for each keypoint.
+
+    Returns:
+        (`dict`): Matched keypoint ratio for all the detectors.
+    """
     kpnp_unique= np.unique(np.array(list(chain(*[value.tolist() for value in kpnp_det.values()]))), axis=0,)
     kpnp_filtered_frequency = get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency)
     matched_kp_ratio_det = dict()
@@ -642,23 +660,41 @@ def get_matched_kp_ratio_det(kpnp_det, frequency):
     return matched_kp_ratio_det
 
 
-def get_matched_kpnp_ratio_det(kpnp_det, frequency):
-    kpnp_unique= np.unique(np.array(list(chain(*[value.tolist() for value in kpnp_det.values()]))), axis=0,)
-    kpnp_filtered_by_frequency = get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency)
-    matched_kpnp_ratio_det = dict()
-
-    for detector, kp in kpnp_det.items():
-        kpnp = kp.tolist()
-        total_kpnp_det = len(kp)
-        matched_kpnp_total = 0
-        for kpnp_filtered in kpnp_filtered_by_frequency.tolist():
-            if kpnp_filtered in kpnp:
-                matched_kpnp_total += 1
-        matched_kpnp_ratio_det[detector] = matched_kpnp_total/total_kpnp_det
-
-    return matched_kpnp_ratio_det
+# def get_matched_kpnp_ratio_det(kpnp_det, frequency):
+#     """
+#     Get matched keypoint(numpy) ratio for all availabel detectors.
+#     Args:
+#         kpnp_det(`dict`): Extracted keypoints for all the available detectors.
+#         frequency(`ndarray`): Corresponding frequency for each keypoint.
+#
+#     Returns:
+#         (`dict`): Matched keypoint ratio for all the detectors.
+#     """
+#     kpnp_unique= np.unique(np.array(list(chain(*[value.tolist() for value in kpnp_det.values()]))), axis=0,)
+#     kpnp_filtered_by_frequency = get_kpnp_by_frequency(kpnp_det, kpnp_unique, frequency)
+#     matched_kpnp_ratio_det = dict()
+#
+#     for detector, kp in kpnp_det.items():
+#         kpnp = kp.tolist()
+#         total_kpnp_det = len(kp)
+#         matched_kpnp_total = 0
+#         for kpnp_filtered in kpnp_filtered_by_frequency.tolist():
+#             if kpnp_filtered in kpnp:
+#                 matched_kpnp_total += 1
+#         matched_kpnp_ratio_det[detector] = matched_kpnp_total/total_kpnp_det
+#
+#     return matched_kpnp_ratio_det
 
 def get_kpnp_det_arr(image_set_name, pckl_path):
+    """
+
+    Args:
+        image_set_name(`str`): Name of the image sequence.
+        pckl_path(`str`): Path to the data.
+
+    Returns:
+        (`list`): Kepoints for all the images in the image sequence for all the detectors.
+    """
     image_set_ = util.get_image_set(pckl_path, image_set_name)
     kpnp_det_arr = []
     # image_num = 4

@@ -1,11 +1,13 @@
 import os
 from matplotlib import pyplot as plt
-from src import keypoint_processing as kpp
 from src import data as dt
 from src import util
 import yaml
-import numpy as np
 from src import detector_descriptor as dd
+
+"""
+Photometric transformation.
+"""
 
 color_map = plt.get_cmap('tab20').colors
 image_set_variance = {

@@ -7,7 +7,9 @@ from src import keypoint_processing as kpp
 import yaml
 import cv2
 
-
+"""
+A module for experimental methods.
+"""
 image_set_variance = {
     'bark': 'zoom_rotation',
     'boat': 'zoom_rotation',
@@ -19,14 +21,6 @@ image_set_variance = {
     'ubc': 'jpeg-compression'
 }
 os.chdir('..')
-
-# def get_paths(dataset_path, extension):
-#     path_list = list()
-#     for file in os.listdir(dataset_path):
-#         if file.endswith(extension):
-#             path_list.append(os.path.join(dataset_path, file))
-#     return path_list
-
 
 with open(os.path.join('./', 'config.yml'), 'r') as ymlfile:
     cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
