@@ -110,6 +110,7 @@ def exp_desc_et_plt(image_set, detector_name, ax):
     des_et_kp = dict()
     image_num = 0
     # print(detector_name)
+    kp_num = list()
     for image_name, image in image_set.items():
         des_et_kp[image_num] = kpp.get_alldes_desc_et(image, detector_name)
         image_num += 1
@@ -119,9 +120,10 @@ def exp_desc_et_plt(image_set, detector_name, ax):
 
 
     for values in des_et_kp.values():
-        kp_size_arr.append('{0} \nImage: \n{1} {2}'.format(str(values['Number of Keypoints']),
+        kp_size_arr.append('Image{2}\n {0}'.format(str(values['Number of Keypoints']),
                                                           list(image_set.keys())[0].split('_')[0],
-                                                          image_num))
+                                                          image_num-1))
+        kp_num.append(values['Number of Keypoints'])
         # val = values['Descriptors']['ORB'][1].shape[0]
         # print(f'vaue is:{val}')
         # for descriptor_name in dd.all_descriptors:
@@ -136,7 +138,7 @@ def exp_desc_et_plt(image_set, detector_name, ax):
 
     plot_data_desc = dict()
     for descriptor_name in dd.all_descriptors:
-        if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE':
+        if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE' and detector_name is not 'KAZE':
             continue
         plot_data_desc[descriptor_name] = list()
         for image_num, values in des_et_kp.items():
@@ -148,10 +150,12 @@ def exp_desc_et_plt(image_set, detector_name, ax):
     for descriptor_name, execution_times in plot_data_desc.items():
         if descriptor_name is 'AKAZE':
             ax.scatter(kp_size_arr, execution_times, c=colors[i], marker='p', label=descriptor_name)
+            # ax.set_xlabel(kp_size_arr, fontsize=12)
         else:
             ax.scatter(kp_size_arr, execution_times, c=colors[i], marker=markers[i], label=descriptor_name)
+            # ax.set_xlabel(kp_size_arr, fontsize=12)
             i += 1
-    # return axs
+    return plot_data_desc, kp_num
 
 
 def exp_kp_freq_frac_plt(image_set_name, pckl_path, frequencies, axs, row, col):

@@ -12,7 +12,7 @@ def get_alldet_matching_results(
         descriptor_name,
         excluded_det=None,
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
-        nn_match_ratio=0.8,
+        nn_match_ratio=0.7,
         inlier_threshold=2.5):
     if excluded_det is None:
         excluded_det = []
@@ -32,7 +32,7 @@ def get_alldes_matching_results(
         detector_name,
         excluded_des=None,
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
-        nn_match_ratio=0.8,
+        nn_match_ratio=0.7,
         inlier_threshold=2.5):
     if excluded_des is None:
         excluded_des = []
@@ -54,7 +54,7 @@ def get_matching_results(
         detector_name,
         descriptor_name,
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
-        nn_match_ratio=0.8,
+        nn_match_ratio=0.7,
         inlier_threshold=2.5):
     # print(detector_name +'-'+ descriptor_name)
 
@@ -67,7 +67,7 @@ def get_matching_results(
     matched1 = []
     matched2 = []
     unmatched = []
-    # nn_match_ratio = 0.8  # Nearest neighbor matching ratio
+    # nn_match_ratio = 0.7  # Nearest neighbor matching ratio
     for m, n in nn_matches:
         if m.distance < nn_match_ratio * n.distance:
             matched1.append(kp1[m.queryIdx])
@@ -131,7 +131,7 @@ def get_matching_results(
         precision = 0
 
     try:
-        recall = len(true_positive) / (len(true_positive) + len(true_negative))
+        recall = len(true_positive) / (len(true_positive) + len(false_negative))
     except ZeroDivisionError:
         recall = 0
 
@@ -201,7 +201,7 @@ def get_frequency_ratio(data_path, detector_name, image_set_name, labels):
                 pt_freq[i] += 1
     common_pts_np = np.hstack((np.array(common_pts), pt_freq))
     unique, counts = np.unique(common_pts_np[:, 2], return_counts=True)
-    frequency_ratio = dict(zip(unique, np.round(counts / np.sum(counts), 2)))
+    frequency_ratio = dict(zip(unique, np.round(counts / np.sum(counts), 5)))
     frequency = dict(zip(unique, counts))
     return frequency_ratio, frequency
 
@@ -502,7 +502,7 @@ def get_alldes_desc_et(image, detector_name):
     execution_time = dict()
     for descriptor_name in dd.all_descriptors:
         # descriptor = dd.initialize_descriptor(descriptor_name)
-        if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE':
+        if descriptor_name is 'AKAZE' and detector_name is not 'AKAZE' and detector_name is not 'KAZE':
             continue
         start_time = default_timer()
         desc = get_desc(image, kp, descriptor_name)

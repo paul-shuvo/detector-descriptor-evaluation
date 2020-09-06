@@ -8,8 +8,6 @@ from timeit import default_timer
 # Change current directory to the dataset folder
 # os.chdir('..')
 # os.chdir(os.path.join(os.getcwd(), 'dataset'))
-
-
 # print(os.getcwd())
 
 
@@ -47,6 +45,16 @@ def get_paths(dataset_path, extension):
 
 
 def load_images(dataset_path, extension):
+    """
+    Loads all the images of type "extension" e.g. .ppm. .jpg, etc. from the given path to the dataset.
+    Args:
+        dataset_path(`str`): Path to the dataset directory.
+        extension(`str`): Image extension.
+
+    Returns:
+        (`list`): A list of numpy arrays generated from the images.
+
+    """
     image_paths = get_paths(dataset_path, extension)
     image_dataset = dict()
     for image_path in image_paths:
@@ -57,6 +65,15 @@ def load_images(dataset_path, extension):
 
 
 def load_labels(dataset_path, extension):
+    """
+    Loads the labels e.g. homography between images.
+    Args:
+        dataset_path(`str`): Path to the dataset directory.
+        extension(`str`): Image extension.
+
+    Returns:
+        (`list`): A list of numpy arrays containing the labels.
+    """
     label_paths = get_paths(dataset_path, extension)
     label_dataset = dict()
     for label_path in label_paths:
@@ -68,11 +85,23 @@ def load_labels(dataset_path, extension):
     return label_dataset
 
 def dump_data(data, path):
+    """
+    Saves data as a `.pckl` file in the given directory.
+    Args:
+        data(`any variable type`): Contains the data.
+        path(`str`): Path to the file.
+
+    """
     with open(path, 'wb') as file:
         pkl.dump(data, file, protocol=pkl.HIGHEST_PROTOCOL)
 
 
 def load_data(path):
+    """
+    Loads data from a file path.
+    Args:
+        path(`str`): Path of the file.
+    """
     with open(path, 'rb') as file:
         return pkl.load(file)
 

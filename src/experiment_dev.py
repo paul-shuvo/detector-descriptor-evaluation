@@ -1,17 +1,12 @@
 import os
-from matplotlib import pyplot as plt
 import numpy as np
-from timeit import default_timer
-import pandas as pd
-import seaborn as sns
 from src import detector_descriptor as dd
 from src import data as dt
 from src import util
 from src import keypoint_processing as kpp
-from src import experiments as ex
 import yaml
 import cv2
-from math import sqrt
+
 
 image_set_variance = {
     'bark': 'zoom_rotation',
