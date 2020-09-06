@@ -14,6 +14,24 @@ def get_alldet_matching_results(
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
         nn_match_ratio=0.7,
         inlier_threshold=2.5):
+    """
+    Finds the matching result for all the detector-descriptor matching result for a given descriptor.
+    Args:
+        image_tuple(`tuple`): Image pair which are used to find the keypoint matches.
+        label_homography(`ndarray`): The homography matrix for the given image pair.
+        descriptor_name(`str`): The name of the descriptor.
+        excluded_det(`list`): A list of detectors excluded from the original detector list.
+        matcher_type(`cv2`): The matcher algorithm.
+        .. Note:
+            The default matcher type is `cv2.DescriptorMatcher_BRUTEFORCE`; while using other matcher type make sure to
+            check the supported distance measuring technique.
+        nn_match_ratio(`float`): This ratio is used to further prune the keypoint matches.
+        inlier_threshold(`float`): The distance threshold used to classify inliers.
+
+    Returns:
+        (`dict`): The matching results for all the detector-descriptor combination.
+
+    """
     if excluded_det is None:
         excluded_det = []
     alldet_inlier_ratio = dict()
@@ -34,6 +52,24 @@ def get_alldes_matching_results(
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
         nn_match_ratio=0.7,
         inlier_threshold=2.5):
+    """
+    Finds the matching result for all the detector-descriptor matching result for a given detector.
+    Args:
+        image_tuple(`tuple`): Image pair which are used to find the keypoint matches.
+        label_homography(`ndarray`): The homography matrix for the given image pair.
+        detector_name(`str`): The name of the detector.
+        excluded_des(`list`): A list of descriptors excluded from the original detector list.
+        matcher_type(`cv2`): The matcher algorithm.
+        .. Note:
+            The default matcher type is `cv2.DescriptorMatcher_BRUTEFORCE`; while using other matcher type make sure to
+            check the supported distance measuring technique.
+        nn_match_ratio(`float`): This ratio is used to further prune the keypoint matches.
+        inlier_threshold(`float`): The distance threshold used to classify inliers.
+
+    Returns:
+        (`dict`): The matching results for all the detector-descriptor combination.
+
+    """
     if excluded_des is None:
         excluded_des = []
     if detector_name is not 'AKAZE':
@@ -56,6 +92,24 @@ def get_matching_results(
         matcher_type=cv2.DescriptorMatcher_BRUTEFORCE,
         nn_match_ratio=0.7,
         inlier_threshold=2.5):
+    """
+    Finds the matching result for all the detector-descriptor matching result for a given descriptor.
+    Args:
+        image_tuple(`tuple`): Image pair which are used to find the keypoint matches.
+        label_homography(`ndarray`): The homography matrix for the given image pair.
+        detector_name(`str`): The name of the detector.
+        descriptor_name(`str`): The name of the descriptor.
+        matcher_type(`cv2`): The matcher algorithm.
+        .. Note:
+            The default matcher type is `cv2.DescriptorMatcher_BRUTEFORCE`; while using other matcher type make sure to
+            check the supported distance measuring technique.
+        nn_match_ratio(`float`): This ratio is used to further prune the keypoint matches.
+        inlier_threshold(`float`): The distance threshold used to classify inliers.
+
+    Returns:
+        (`dict`): The matching results for the detector-descriptor combination.
+
+    """
     # print(detector_name +'-'+ descriptor_name)
 
     kp1, desc1 = get_desc_by_det(image_tuple[0], detector_name, descriptor_name)
@@ -150,7 +204,7 @@ def get_matching_results(
 
 
 def get_frequency_ratio(data_path, detector_name, image_set_name, labels):
-    '''
+    """
     Returns the ratio (#keypoints/#total keypoints) for each frequency value.
     Args:
         data_path(`str`): Path of the data.
@@ -160,7 +214,7 @@ def get_frequency_ratio(data_path, detector_name, image_set_name, labels):
 
     Returns:
         (`tuple`): A tuple of dictionaries containing frequency values and frequency ratios.
-    '''
+    """
     image_set = util.get_image_set(data_path, image_set_name)
     image1 = image_set[f'{image_set_name}_img{1}']
     kp = get_kp(image1, detector_name)
@@ -207,7 +261,7 @@ def get_frequency_ratio(data_path, detector_name, image_set_name, labels):
 
 
 def get_repeatability_by_det(detector_name, image_set_name, image_set, labels):
-    '''
+    """
     Returns the repeatability information for each image in a
     specific image set for a certain detector.
     Args:
@@ -219,7 +273,7 @@ def get_repeatability_by_det(detector_name, image_set_name, image_set, labels):
     Returns:
         (`dict`): Returns number of keypoints that are not repeated, repeated, and the ratio of repeated keypoints.
 
-    '''
+    """
     image1 = image_set[f'{image_set_name}_img{1}']
     kp = get_kp(image1, detector_name)
     repeatability = dict()
@@ -260,12 +314,8 @@ def get_unique_kpnp(kp_all):
     Returns:
         (`ndarray`): All unique numpy keypoints extracted from a dictionary containing groups of keypoints.
 
-    Examples:
-        .. code-block:: python
-
-
     See Also:
-        :func:`~src.keypoint_processing`
+        :func:`~src.keypoint_processing.get_kpnp_frequency`
 
     """
     kpnp_all = cvkp2np_all(kp_all)
@@ -284,6 +334,8 @@ def get_kpnp_frequency(kpnp_all, kpnp_unique):
     Returns:
         (`ndarray`): Contains keypoint locations and corresponding frequency for all numpy type keypoints.
         Shape is `(nx3) -> (keypoint_x, keypoint_y, frequency)`.
+    See Also:
+        :func:`~src.keypoint_processing.get_unique_kpnp`
     """
     # pt_freq contains frequency value for each keypoint
     pt_freq = np.zeros((kpnp_unique.shape[0], 1))
@@ -315,6 +367,8 @@ def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
 
     Returns:
         (`ndarray`): Contains keypoints for that corresponds to a certain frequency.
+    See Also:
+        :func:`~src.keypoint_processing.get_unique_kpnp`
     """
     # get frequency for all numpy type keypoints
     if isinstance(kpnp_all, dict):
@@ -330,6 +384,18 @@ def get_kpnp_by_frequency(kpnp_all, kpnp_unique, frequency):
 
 
 def get_kpnp_frequency_det_sigma(image, detector_name, sigma_values):
+    """
+    Get keypoint frequency for a given detector for different Gaussian blur levels (`sigma_values`) applied to an image.
+    Args:
+        image(`ndarray`): The image array.
+        detector_name(`str`): Name of the detector.
+        sigma_values(`list`): A list of sigma values for Gaussian blur.
+
+    Returns:
+        (`ndarray`, `ndarray`): all the unique keypoints detected across different Gaussian blur levels, and their
+        frequency of getting detected.
+
+    """
     kp_all = {}
     for sigma in sigma_values:
         if sigma is 0:
@@ -458,14 +524,14 @@ def get_det_kp_et(image_set, detector_name):
 
 def get_desc_by_det(image, detector_name, descriptor_name):
     """
-    
+    Extract keypoints and get the description of an image.
     Args:
-        image:
-        detector_name:
-        descriptor_name:
+        image(`ndarray`): Query image.
+        detector_name(`str`): Name of the detector.
+        descriptor_name(`str`): Name of the descriptor.
 
     Returns:
-
+        (`cv2`): A cv2 descriptor object.
     """
     descriptor = dd.initialize_descriptor(descriptor_name)
     kp = get_kp(image, detector_name)
@@ -474,12 +540,30 @@ def get_desc_by_det(image, detector_name, descriptor_name):
 
 
 def get_desc(image, kp, descriptor_name):
+    """
+    Get the description of an image from already extracted keypoints.
+    Args:
+        image(`ndarray`): Query image.
+        kp(`cv2`): Extracted keypoints from the given image.
+        descriptor_name(`str`): Name of the descriptor.
+
+    Returns:
+        (`cv2`): The description of the extracted keypoints.
+    """
     descriptor = dd.initialize_descriptor(descriptor_name)
     desc = descriptor.compute(image, kp)
     return desc
 
 
 def get_alldet_kp_et(image):
+    """
+    Extract keypoints from a given image and measure the execution time for all the available detectors.
+    Args:
+        image(`ndarray`): Query image.
+
+    Returns:
+        (`dict`, `dict`): Execution time and all the extracted keypoints for all the available detectors.
+    """
     keypoints_by_detector = dict()
     execution_time = dict()
     all_detectors = dd.get_all_detectors()
@@ -495,6 +579,16 @@ def get_alldet_kp_et(image):
 
 
 def get_alldes_desc_et(image, detector_name):
+    """
+    Compute descriptors from a given image and detector, and measure the execution time for all the available detectors.
+    Args:
+        image(`ndarray`): Query image.
+        detector_name(`str`): Name of the detector.
+
+    Returns:
+        (`dict`): Contains execution time and descriptors for the extracted keypoints for all the available
+        descriptors, and the number of keypoints.
+    """
     kp = get_kp(image, detector_name)
     # print(image)
     # print(f'{detector_name}: {image_name}: {len(kp)}')
@@ -510,7 +604,7 @@ def get_alldes_desc_et(image, detector_name):
         descriptors[descriptor_name] = desc
     return {'Execution Time': execution_time, 'Descriptors': descriptors, 'Number of Keypoints': len(kp)}
 
-# dd.print_dictionary(execution_time)
+
 def get_det_avg_numkp_et(image_set):
     avg_keypoints_by_detector = dict()
     avg_execution_time = dict()
