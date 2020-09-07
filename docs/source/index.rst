@@ -7,15 +7,7 @@ Welcome to State of the Binary Descriptor's documentation!
 ==========================================================
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
-   :caption: Contents:
 
    modules
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

@@ -2,7 +2,7 @@ import pickle as pkl
 import cv2
 import os
 import numpy as np
-from src import detector_descriptor as dd
+from detesc import detector_descriptor as dd
 from timeit import default_timer
 
 # Change current directory to the dataset folder
@@ -26,7 +26,7 @@ def get_paths(dataset_path, extension):
 
         .. code-block:: python
 
-            In[1]: from src.data import get_paths_by_extension
+            In[1]: from detesc.data import get_paths_by_extension
             In[2]: get_paths_by_extension('oxford', ('.pgm', '.ppm'))
             Out[3]: ['D:\\Programming Projects\\python projects\\state-of-the-binary-descriptor\\dataset\\oxford\\bark_img1.ppm',
                      'D:\\Programming Projects\\python projects\\state-of-the-binary-descriptor\\dataset\\oxford\\bark_img2.ppm',
@@ -48,6 +48,7 @@ def get_paths(dataset_path, extension):
 def load_images(dataset_path, extension):
     """
     Loads all the images of type "extension" e.g. .ppm. .jpg, etc. from the given path to the dataset.
+
     Args:
         dataset_path(`str`): Path to the dataset directory.
         extension(`str`): Image extension.
@@ -68,6 +69,7 @@ def load_images(dataset_path, extension):
 def load_labels(dataset_path, extension):
     """
     Loads the labels e.g. homography between images.
+
     Args:
         dataset_path(`str`): Path to the dataset directory.
         extension(`str`): Image extension.
@@ -88,6 +90,7 @@ def load_labels(dataset_path, extension):
 def dump_data(data, path):
     """
     Saves data as a `.pckl` file in the given directory.
+
     Args:
         data(`any variable type`): Contains the data.
         path(`str`): Path to the file.
@@ -100,6 +103,7 @@ def dump_data(data, path):
 def load_data(path):
     """
     Loads data from a file path.
+
     Args:
         path(`str`): Path of the file.
     """

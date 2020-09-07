@@ -1,11 +1,11 @@
-from src.detector_descriptor import *
+from detesc.detector_descriptor import *
 import cv2
 import pytest
 
 
 # import os
 # import pytest
-# os.chdir(os.path.join(os.getcwd(),'src') )
+# os.chdir(os.path.join(os.getcwd(),'detesc') )
 # os.chdir('..')
 
 from contextlib import contextmanager

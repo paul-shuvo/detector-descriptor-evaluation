@@ -1,8 +1,8 @@
-from src import data as dt
-from src import util
-from src import detector_descriptor as dd
+from detesc import data as dt
+from detesc import util
+from detesc import detector_descriptor as dd
 import matplotlib.pyplot as plt
-import src.keypoint_processing as kpp
+import detesc.keypoint_processing as kpp
 import pandas as pd
 import numpy as np
 

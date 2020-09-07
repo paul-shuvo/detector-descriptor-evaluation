@@ -1,4 +1,4 @@
-from src.data import *
+from detesc.data import *
 import cv2
 import pytest
 

@@ -1,9 +1,9 @@
 # import os
 # from matplotlib import pyplot as plt
-# from src import data as dt
-# from src import util
+# from detesc import data as dt
+# from detesc import util
 # import yaml
-# from src import detector_descriptor as dd
+# from detesc import detector_descriptor as dd
 #
 # """
 # Photometric transformation.

@@ -13,7 +13,7 @@ def get_all_detectors():
     Examples:
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: get_all_detectors()
             Out[2]:
             {'AGAST': cv2.AgastFeatureDetector,
@@ -28,7 +28,7 @@ def get_all_detectors():
 
 
     See Also:
-        :func:`~src.detector_descriptor.get_all_descriptors`
+        :func:`~detesc.detector_descriptor.get_all_descriptors`
 
     .. _version 4.2.0:
         https://docs.opencv2.org/4.2.0/modules.html
@@ -60,7 +60,7 @@ def get_all_descriptors():
     Examples:
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: get_all_descriptors()
             Out[2]:
             {'LATCH': cv2.xfeatures2d_LATCH,
@@ -76,7 +76,7 @@ def get_all_descriptors():
 
 
     See Also:
-        :func:`~src.detector_descriptor.get_all_detectors`
+        :func:`~detesc.detector_descriptor.get_all_detectors`
 
     .. _version 4.2.0:
         https://docs.opencv2.org/4.2.0/modules.html
@@ -109,12 +109,12 @@ def select_detector(detector_name):
 
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: select_detector('FAST')
             Out[2]: cv2.FastFeatureDetector
 
     See Also:
-        :func:`~src.detector_descriptor.select_descriptor`
+        :func:`~detesc.detector_descriptor.select_descriptor`
 
     """
     return get_all_detectors().get(detector_name)
@@ -134,12 +134,12 @@ def select_descriptor(descriptor_name):
 
         .. code-block:: python
 
-            In[3]: from src.detector_descriptor import *
+            In[3]: from detesc.detector_descriptor import *
             In[4]: select_descriptor('BRISK')
             Out[4]: cv2.BRISK
 
     See Also:
-        :func:`~src.detector_descriptor.select_detector`
+        :func:`~detesc.detector_descriptor.select_detector`
     """
     return get_all_descriptors().get(descriptor_name)
 
@@ -155,7 +155,7 @@ def get_all_variants():
 
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: get_all_variants()
             Out[2]:
             {'BOOSTDESC': {'desc': {'BGM': 100,
@@ -197,8 +197,8 @@ def get_all_variants():
              'ORB': {'scoreType': {'HARRIS_SCORE': 0, 'FAST_SCORE': 1}}}
 
     See Also:
-        :func:`~src.detector_descriptor.get_all_detectors`
-        :func:`~src.detector_descriptor.get_all_descriptors`
+        :func:`~detesc.detector_descriptor.get_all_detectors`
+        :func:`~detesc.detector_descriptor.get_all_descriptors`
 
     """
     return {
@@ -290,7 +290,7 @@ def get_variants(class_name, variant_type=None):
 
             .. code-block:: python
 
-                In[1] from src.detector_descriptor import *
+                In[1] from detesc.detector_descriptor import *
                 In[2] get_variants('AKAZE')
                 Out[2]:
                 {'diffusivity': {'DIFF_PM_G1': 0,
@@ -319,14 +319,14 @@ def get_variants(class_name, variant_type=None):
 
 
     .. note::
-        All the available detector and descriptor can be retrieved using :func:`~src.detector_descriptor.get_all_detectors` and :func:`~src.detector_descriptor.get_all_descriptors`.
+        All the available detector and descriptor can be retrieved using :func:`~detesc.detector_descriptor.get_all_detectors` and :func:`~detesc.detector_descriptor.get_all_descriptors`.
 
     Returns:
         (:obj:`dict`): A dictionary containing all the variants for a specific detector or descriptor class.
 
     See Also:
-        :func:`~src.detector_descriptor.get_all_detectors`
-        :func:`~src.detector_descriptor.get_all_descriptors`
+        :func:`~detesc.detector_descriptor.get_all_detectors`
+        :func:`~detesc.detector_descriptor.get_all_descriptors`
 
 
     """
@@ -373,7 +373,7 @@ def initialize_detector(detector_name, variant_type=None, variant=None, addition
     Examples:
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: initialize_detector('FAST')
             Out[2]: <FastFeatureDetector 000002269365FC70>
             In[3]: initialize_detector('FAST','type',2)
@@ -448,7 +448,7 @@ def initialize_descriptor(descriptor_name, variant_type=None, variant=None):
     Examples:
         .. code-block:: python
 
-            In[1]: from src.descriptor_descriptor import *
+            In[1]: from detesc.descriptor_descriptor import *
             In[2]: initialize_descriptor('AKAZE')
             Out[2]: <AKAZE 000002269365FD10>
             In[3]: initialize_descriptor('AKAZE','diffusivity', 3)
@@ -523,7 +523,7 @@ def available_attributes(var):
 
             .. code-block:: python
 
-                In[1]: from src.detector_descriptor import *
+                In[1]: from detesc.detector_descriptor import *
                 In[2]: available_attributes('FAST')
                 Out[2]: ['DefaultName', 'NonmaxSuppression', 'Threshold', 'Type']
 
@@ -531,7 +531,7 @@ def available_attributes(var):
 
             .. code-block:: python
 
-                In[1]: from src.detector_descriptor import *
+                In[1]: from detesc.detector_descriptor import *
                 In[2]: obj = initialize_descriptor('AKAZE')
                 In[3]: available_attributes(obj)
                 Out[4]:
@@ -573,7 +573,7 @@ def get_attribute(obj, attribute_name):
         attribute_name (`str`): The name of the attribute. *`attribute_name` should have a **capital case** value*
 
     .. attention::
-        All the attributes can be found using :func:`~src.detector_descriptor.available_attributes`
+        All the attributes can be found using :func:`~detesc.detector_descriptor.available_attributes`
 
     Returns:
         The value of the attribute.
@@ -584,7 +584,7 @@ def get_attribute(obj, attribute_name):
     Examples:
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: obj = initialize_detector('FAST', 'type', 1)
             In[3]: get_attribute(obj, 'Type')
             Out[9]: 1
@@ -593,8 +593,8 @@ def get_attribute(obj, attribute_name):
         AttributeError: If the attribute doesn't exist for the specified object `obj`
 
     See Also:
-        :func:`~src.detector_descriptor.available_attributes`
-        :func:`~src.detector_descriptor.set_attribute`
+        :func:`~detesc.detector_descriptor.available_attributes`
+        :func:`~detesc.detector_descriptor.set_attribute`
 
     .. _exec:
         https://docs.python.org/3/library/functions.html#exec
@@ -619,7 +619,7 @@ def set_attribute(obj, attribute_name, val):
         val (`int`): The value that would be assigned. `val` is usually of type `int` but it can be of other types as well.
 
     .. attention::
-        All the attributes can be found using :func:`~src.detector_descriptor.available_attributes`
+        All the attributes can be found using :func:`~detesc.detector_descriptor.available_attributes`
 
     Returns:
         The value of the attribute.
@@ -630,7 +630,7 @@ def set_attribute(obj, attribute_name, val):
     Examples:
         .. code-block:: python
 
-            In[1]: from src.detector_descriptor import *
+            In[1]: from detesc.detector_descriptor import *
             In[2]: obj = initialize_detector('FAST', 'type', 1)
             In[3]: set_attribute(obj, 'Type', 2)
             Out[9]: 1
@@ -639,8 +639,8 @@ def set_attribute(obj, attribute_name, val):
         AttributeError: If the attribute doesn't exist for the specified object `obj`
 
     See Also:
-        :func:`~src.detector_descriptor.available_attributes`
-        :func:`~src.detector_descriptor.get_attribute`
+        :func:`~detesc.detector_descriptor.available_attributes`
+        :func:`~detesc.detector_descriptor.get_attribute`
 
     .. _exec:
         https://docs.python.org/3/library/functions.html#exec

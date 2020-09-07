@@ -1,9 +1,9 @@
 # import os
 # import numpy as np
-# from src import detector_descriptor as dd
-# from src import data as dt
-# from src import util
-# from src import keypoint_processing as kpp
+# from detesc import detector_descriptor as dd
+# from detesc import data as dt
+# from detesc import util
+# from detesc import keypoint_processing as kpp
 # import yaml
 # import cv2
 #
